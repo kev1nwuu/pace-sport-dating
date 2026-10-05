@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#050405" />
+    <meta name="pace-data-adapter" content="local" />
+    <title>PACE — Meet people who move like you</title>
+    <style>html { background:var(--ink, #070807); }</style>
+    <link rel="preload" href="assets/onboarding-charcoal-texture.jpg" as="image" fetchpriority="high" />
+    <link rel="preload" href="assets/maya-profile-01.jpg" as="image" />
+    <link rel="preload" href="assets/fonts/manrope-400.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="assets/fonts/manrope-800.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="assets/fonts/archivo-black-400.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="assets/fonts/dm-mono-500.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="stylesheet" href="styles.css?v=pace-release-audit-58" />
+  </head>
+  <body class="onboarding-open">
+    <section id="onboarding-root" class="onboarding-root is-launching" data-step="launch" aria-label="PACE account setup" aria-live="polite">
+      <div class="onboarding-light" aria-hidden="true"></div>
+      <header class="onboarding-header">
+        <button id="onboarding-back" class="onboarding-back hidden" type="button" data-action="onboarding-back">Back</button>
+        <div class="onboarding-brand" aria-label="PACE"><span>P</span><strong>PACE</strong></div>
+        <span id="onboarding-progress" class="onboarding-progress" aria-label="Onboarding progress"></span>
+      </header>
+      <div id="onboarding-stage" class="onboarding-stage">
+        <div class="pace-launch" role="status" aria-label="Opening PACE">
+          <div class="pace-launch-surface" aria-hidden="true"></div>
+          <div class="pace-launch-brand" aria-hidden="true"><span>P</span><strong>PACE</strong></div>
+          <span class="visually-hidden">Opening PACE</span>
+        </div>
+      </div>
+    </section>
+
+    <main class="app-shell" data-i18n-aria="appLabel" aria-label="PACE 运动社交应用" aria-hidden="true" inert>
+      <section class="app-topbar">
+        <button class="brand" data-action="home" data-i18n-aria="home" aria-label="PACE 首页"><span class="brand-mark">P</span><span>PACE</span></button>
+        <button class="icon-button" data-action="open-notifications" data-i18n-aria="notifications" aria-label="通知">⌁<span class="notification-dot" data-notification-dot hidden></span></button>
+      </section>
+
+      <section id="discover-view" class="view active" data-i18n-aria="discoverTab" aria-label="发现">
+        <div class="discovery-toolbar">
+          <div class="sport-filter-strip" role="group" data-i18n-aria="sportFilters" aria-label="运动筛选">
+            <button class="sport-filter-pill active" data-action="filter-sport-all"><svg class="pill-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/></svg><span data-i18n="allSports">全部运动</span></button>
+            <button class="sport-filter-pill" data-action="filter-sport" data-sport-id="running"><svg class="pill-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/><path d="M16 17h4M4 13h4"/></svg><span data-sport-id-label="running">跑步</span></button>
+            <button class="sport-filter-pill" data-action="filter-sport" data-sport-id="cycling"><svg class="pill-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg><span data-sport-id-label="cycling">骑行</span></button>
+            <button class="sport-filter-pill others-filter-pill" data-action="open-other-sports"><svg class="pill-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg><span data-other-label>其他</span></button>
+          </div>
+          <button class="top-filter-button" data-action="open-discovery-editor" data-i18n-aria="filterPreferences" aria-label="编辑筛选"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
+          <span id="like-count" class="visually-hidden" aria-live="polite">12 次 Like</span>
+        </div>
+
+        <section id="discovery-card" class="profile-card" aria-live="polite">
+          <div class="card-progress" aria-hidden="true"><span class="active"></span><span></span><span></span><span></span></div>
+          <div class="swipe-stamp swipe-like" data-swipe-label="like">TRAIN</div>
+          <div class="swipe-stamp swipe-skip" data-swipe-label="skip">PASS</div>
+          <div class="profile-media">
+            <div class="photo image-maya-primary" data-discovery-photo role="img" aria-label="Maya 在城市公园跑步"></div>
+            <button class="gallery-nav gallery-prev" type="button" data-action="previous-discovery-photo" data-i18n-aria="previousPhoto" aria-label="上一张照片"></button>
+            <button class="gallery-nav gallery-next" type="button" data-action="next-discovery-photo" data-i18n-aria="nextPhoto" aria-label="下一张照片"></button>
+            <span id="discovery-gallery-status" class="gallery-status" aria-live="polite"></span>
+            <div class="card-gradient"></div>
+            <div class="profile-identity"><h2><span class="profile-name">Maya</span><span class="profile-age">28</span><button class="verification-mark" data-action="open-verification" data-i18n-aria="selfieVerified" aria-label="自拍已认证"><span aria-hidden="true">✓</span></button></h2><p data-i18n="mayaBio">“慢跑 10K，聊聊天，再喝杯咖啡。一起吗？”</p><div class="profile-preference-row"><span data-i18n="mayaSchedule">周末可约</span><span data-i18n="mayaGoal">备战赛事</span></div></div>
+          </div>
+          <div class="athlete-panel">
+            <div class="sport-list">
+              <div><span class="sport-logo run-logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 15.5c3.8.2 5.5-1.3 7.2-4.8l2.1 2.2c1.8 1.9 3.6 2.7 7.7 3.1v3H3z"/><path d="M9.7 8.3l2.6 4.6M14.8 14l-2 2"/></svg></span><strong data-sport-label="running">跑步</strong></div>
+              <div><span class="sport-logo cycle-logo" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="6" cy="16" r="3.5"/><circle cx="18" cy="16" r="3.5"/><path d="M6 16l4-7 4 7H6l3-5h6l3 5M9 7h3"/></svg></span><strong data-sport-label="cycling">骑行</strong></div>
+              <div><span class="sport-logo training-logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 9v6M4.5 10.5v3M17 9v6M19.5 10.5v3M7 12h10"/></svg></span><strong data-sport-label="strength">力量训练</strong></div>
+            </div>
+            <div class="session-stat"><span data-sport-label="weekly">每周训练</span><strong>5+</strong></div>
+          </div>
+        </section>
+        <section id="waitlist-state" class="waitlist-state hidden" aria-live="polite">
+          <div class="route-symbol">⌁</div><p class="eyebrow" data-i18n="networkGrowing">还没遇见合适的人</p><h2 data-i18n="cityOpening">换个范围，继续认识</h2><p data-i18n="waitlistText">附近暂时没有符合这些条件的人。试试其他运动，或扩大距离，给相识多一点可能。</p>
+        </section>
+        <div class="card-actions"><button class="round-button skip" data-action="skip" data-i18n-aria="skipProfile" aria-label="跳过此资料"><span aria-hidden="true">×</span></button><button class="round-button intent" data-action="show-intent" data-i18n-aria="trainingIntent" aria-label="约 TA 一起运动" aria-describedby="intent-benefit-description"><svg class="intent-symbol" viewBox="0 0 28 28" aria-hidden="true" focusable="false"><rect x="4" y="5.5" width="20" height="19" rx="5"/><path d="M9 3.5v4M19 3.5v4M4.5 11h19"/><path class="intent-heart" d="M14 21s-4-2.5-4-5a2.2 2.2 0 0 1 4-1.2 2.2 2.2 0 0 1 4 1.2c0 2.5-4 5-4 5Z"/></svg></button><button class="round-button like" data-action="like" data-i18n-aria="likeProfile" aria-label="喜欢此资料"><span aria-hidden="true">♥</span></button></div>
+        <span id="intent-benefit-description" class="visually-hidden" data-i18n="directInviteHint">尚未匹配时的运动邀约是 PACE Plus 会员权益。</span>
+      </section>
+
+      <section id="connect-view" class="view" aria-labelledby="connect-title">
+        <h1 id="connect-title" data-i18n="connectionTitle">匹配</h1>
+        <button class="match-feature match-feature-button" type="button" data-action="open-conversation">
+          <span class="mini-photo image-maya" role="img" data-i18n-aria="mayaAvatar" aria-label="Maya 的头像"></span>
+          <span class="match-feature-copy"><span class="match-name-row"><span class="match-title">Maya</span><span class="verification-mark verification-mark-static" aria-hidden="true"><span>✓</span></span></span><span class="match-summary" data-i18n="training10k">从共同的 10K 目标开始聊起</span></span>
+        </button>
+        <section id="plus-interest" class="likes-panel plus-banner" aria-label="PACE Plus"></section>
+      </section>
+
+      <section id="train-view" class="view" aria-labelledby="train-title"><h1 id="train-title">Train</h1></section>
+
+      <section id="moments-view" class="view" aria-labelledby="moments-title">
+        <div class="moments-heading"><div><div class="eyebrow" data-i18n="momentsEyebrow">多了解一点</div><h1 id="moments-title" data-i18n="momentsTitle">彼此的日常</h1></div><div class="moment-header-actions"><button class="moment-compose-trigger" data-action="open-moment-publisher" data-i18n-aria="publishMoment" aria-label="发布动态"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div></div>
+        <p class="moments-intro" data-i18n="momentsIntro">从一次出发、一条路线、一个小瞬间，慢慢了解你的匹配对象。</p>
+        <section id="moments-feed" class="moments-feed" aria-live="polite"></section>
+      </section>
+
+      <section id="me-view" class="view" data-i18n-aria="myProfile" aria-label="我的资料">
+        <section class="profile-identity-hero" aria-label="Kevin">
+          <div class="profile-avatar-wrap">
+            <div class="my-avatar">K</div>
+            <button class="profile-avatar-edit" type="button" data-action="edit-profile" data-i18n-aria="editProfile" aria-label="编辑资料"><span class="material-symbols-rounded" aria-hidden="true">edit</span></button>
+          </div>
+          <div class="profile-name-line"><h2>Kevin</h2><button class="verification-mark" data-action="open-verification" data-i18n-aria="selfieVerified" aria-label="自拍已认证"><span aria-hidden="true">✓</span></button></div>
+          <p data-i18n="kevinSports">跑步 · 网球 · 骑行</p>
+          <span data-i18n="kevinActivity">4 次 / 周 · 中高阶</span>
+        </section>
+        <nav class="profile-section-tabs" role="tablist" aria-label="Profile sections">
+          <button class="active" type="button" role="tab" aria-selected="true" aria-controls="profile-overview-panel" data-action="show-profile-section" data-profile-section="profile" data-i18n="myProfile">我的资料</button>
+          <button type="button" role="tab" aria-selected="false" aria-controls="profile-settings-panel" data-action="show-profile-section" data-profile-section="settings" data-i18n="settingsAccount">设置与账户</button>
+        </nav>
+        <section id="profile-overview-panel" class="my-profile profile-overview-card" role="tabpanel" data-profile-panel="profile">
+          <header><span data-i18n="profileOverview">资料概览</span><span class="data-badge" data-i18n="garminConnected">GARMIN 已连接</span></header>
+          <div class="profile-overview-row"><span class="profile-overview-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.8 19 5.7v5.5c0 4.7-2.9 8.6-7 10-4.1-1.4-7-5.3-7-10V5.7L12 2.8Z"/><path d="m8.7 12 2.1 2.1 4.7-5"/></svg></span><div><strong data-i18n="selfieVerified">✓ 自拍已认证</strong><small data-i18n="identityVisible">让彼此更安心地认识</small></div></div>
+          <div class="profile-overview-row"><span class="profile-overview-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="14.5" cy="4.4" r="1.8"/><path d="m11.2 8.3 3-1.4 2.3 2.5 2.6.8M10 21l1.2-5.4-3-2.4-2.7 3.4M8.2 13.2l2.3-3.4 2.7 2.1 1.6 3.7 3.7 3"/></svg></span><div><strong data-i18n="kevinSports">跑步 · 网球 · 骑行</strong><small data-i18n="sharedLifestyle">共同爱好，是故事的开场</small></div></div>
+          <div id="profile-card-details" class="profile-card-details" aria-live="polite"></div>
+        </section>
+        <section id="profile-settings-panel" class="profile-settings-panel" role="tabpanel" data-profile-panel="settings" hidden></section>
+      </section>
+
+      <section id="edit-profile-view" class="view profile-editor-view" aria-labelledby="profile-editor-title"></section>
+      <section id="chat-view" class="view" data-i18n-aria="chatConversation" aria-label="聊天"></section>
+
+      <nav class="tabbar" data-i18n-aria="mainNavigation" aria-label="主导航">
+        <button class="tab active" data-tab="discover" data-i18n-aria="discoverTab" aria-label="发现"><span class="tab-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l3 6 6 3-6 3-3 6-3-6-6-3 6-3z"/></svg></span></button>
+        <button class="tab" data-tab="connect" data-i18n-aria="connect" aria-label="连接"><span class="tab-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 017-2.7A4 4 0 0119 10c0 5.6-7 10-7 10z"/></svg></span></button>
+        <button class="tab" data-tab="moments" data-i18n-aria="momentsTab" aria-label="连接动态"><span class="tab-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><circle cx="5" cy="8" r="1.8"/><circle cx="19" cy="7" r="1.8"/><circle cx="18" cy="18" r="1.8"/><path d="M6.7 8.8l2.5 1.7M14.8 10.1l2.6-1.8M14.5 14.2l2.3 2.3"/></svg></span></button>
+        <button class="tab" data-tab="train" data-i18n-aria="train" aria-label="训练"><span class="tab-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15l4-6 4 4 3-5 5 7M5 19h14"/></svg></span></button>
+        <button class="tab" data-tab="me" data-i18n-aria="meTab" aria-label="我"><span class="tab-avatar">K</span></button>
+      </nav>
+    </main>
+
+    <div id="modal-root" class="modal-root hidden" aria-hidden="true">
+      <div class="scrim" data-action="close-modal"></div>
+      <section id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"></section>
+    </div>
+    <div id="match-success-root" class="match-success-root hidden" aria-hidden="true">
+      <div class="match-success-scrim" data-action="close-match-success"></div>
+      <section id="match-success-dialog" class="match-success-dialog" role="dialog" aria-modal="true" aria-labelledby="match-success-title" aria-describedby="match-success-description"></section>
+    </div>
+    <div id="toast" class="toast hidden" role="status" aria-live="polite" aria-atomic="true">
+      <span class="toast-message" data-toast-message></span>
+    </div>
+    <script type="module" src="app.js?v=pace-release-audit-58"></script>
+  </body>
+</html>

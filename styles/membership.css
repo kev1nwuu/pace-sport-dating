@@ -1,0 +1,76 @@
+/* PACE Plus — a restrained sports club pass, using the existing brand palette. */
+.likes-panel.plus-banner { position:relative; overflow:hidden; margin-top:28px; padding:25px; border:1px solid var(--line); border-radius:22px; background:var(--panel); }
+.plus-banner-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:38px; }
+.plus-wordmark { display:inline-flex; align-items:center; gap:8px; color:var(--paper); font:800 14px Manrope,sans-serif; letter-spacing:.12em; }
+.plus-wordmark b { padding:4px 7px; border-radius:5px; background:var(--lime); color:var(--ink); font:500 10px 'DM Mono',monospace; letter-spacing:.04em; }
+.plus-banner-top > .material-symbols-rounded { color:var(--lime); font-size:34px; }
+.likes-panel.plus-banner .eyebrow { color:var(--lime); font-size:10px; }
+.likes-panel.plus-banner h2 { margin:13px 0; font:400 clamp(26px,7vw,34px)/1.08 'Archivo Black',sans-serif; letter-spacing:-.055em; }
+.likes-panel.plus-banner p:not(.eyebrow) { max-width:34ch; margin:0; font-size:13px; line-height:1.65; }
+.plus-banner-cta { display:flex; justify-content:space-between; align-items:center; width:100%; margin-top:27px; padding:15px 18px; border:0; border-radius:12px; background:var(--lime); color:var(--ink); font-size:14px; font-weight:800; }
+.membership-sheet { --membership-muted:var(--muted); }
+.modal:has(.membership-sheet) { border-radius:24px 24px 0 0; padding:26px 24px calc(25px + env(safe-area-inset-bottom)); color-scheme:dark; }
+.membership-sheet header { margin-bottom:18px; }
+.membership-sheet header .eyebrow { margin:0 0 20px; color:var(--lime); letter-spacing:.18em; font:500 11px 'DM Mono',monospace; }
+.membership-sheet h2 { font:400 clamp(31px,9vw,42px)/1.05 'Archivo Black',sans-serif; letter-spacing:-.065em; text-transform:none; }
+.membership-sheet .plus-intro { margin:0; max-width:30ch; font-size:14px; }
+.membership-sheet .plus-context { margin:0; color:var(--lime); font-size:13px; }
+.plus-benefits { display:grid; gap:0; margin:22px 0 14px; padding:0; list-style:none; }
+.plus-benefits li { display:grid; grid-template-columns:38px minmax(0,1fr); gap:12px; padding:17px 0; border-bottom:1px solid var(--line); }
+.plus-benefits li > .material-symbols-rounded { display:grid; place-items:center; align-self:start; width:36px; height:36px; border-radius:11px; background:var(--panel-2); color:var(--lime); font-size:23px; }
+.plus-benefits strong { display:block; font-size:14px; line-height:1.4; font-weight:800; }
+.membership-sheet .plus-benefits p { margin:5px 0 0; font-size:12px; color:var(--muted); line-height:1.55; }
+.membership-sheet .plus-free-note { color:var(--muted); font-size:11px; line-height:1.6; margin:16px 0 22px; }
+.membership-primary,.membership-secondary { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; min-height:52px; padding:13px 16px; border:1px solid var(--lime); border-radius:12px; background:var(--lime); color:var(--ink); font-size:14px; font-weight:800; text-align:left; }
+.membership-secondary { border-color:var(--line); background:var(--panel); color:var(--paper); }
+.membership-primary:disabled,.membership-secondary:disabled { background:var(--panel-2); border-color:var(--line); color:var(--muted); cursor:default; }
+.membership-sheet .plus-purchase-note { margin:12px 0; text-align:center; font-size:11px; color:var(--muted); }
+.plus-links { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:0 17px; }
+.plus-links button,.plus-links a,.member-text-button { display:inline-flex; align-items:center; min-height:44px; padding:6px 0; border:0; background:transparent; color:var(--paper); font-size:11px; text-decoration:underline; text-underline-offset:4px; }
+.plus-links button:disabled { color:var(--muted); text-decoration:none; cursor:default; }
+.membership-sheet .membership-status { margin:12px 0 0; color:var(--lime); font-size:12px; }
+.membership-status:empty { display:none; }
+.membership-sheet .membership-status.is-error { color:var(--orange); }
+.plus-plans { display:grid; gap:9px; min-width:0; margin:0 0 16px; padding:0; border:0; }
+.membership-sheet .plus-plan { position:relative; display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0; padding:15px; border:1px solid var(--line); border-radius:12px; background:var(--panel); cursor:pointer; }
+.plus-plan:has(:checked) { border-color:var(--lime); background:var(--panel-2); }
+.plus-plan input { position:absolute; width:1px; height:1px; opacity:0; }
+.plus-plan:focus-within { outline:2px solid var(--lime); outline-offset:3px; }
+.plus-plan strong,.plus-plan small { display:block; }
+.plus-plan small { margin-top:6px; color:var(--muted); font-size:12px; font-weight:500; }
+.plus-plan > .material-symbols-rounded { color:var(--muted); }
+.plus-plan:has(:checked) > .material-symbols-rounded { color:var(--lime); }
+.member-pass { display:grid; grid-template-columns:1fr auto; align-items:start; margin:25px 0 20px; padding:22px; border:1px solid var(--line); border-radius:18px; background:var(--panel-2); }
+.member-pass > .material-symbols-rounded { color:var(--lime); font-size:28px; }
+.member-pass h3 { grid-column:1/-1; margin:32px 0 0; font-size:22px; letter-spacing:-.04em; }
+.membership-sheet .member-pass p { grid-column:1/-1; display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px; margin:18px 0 0; padding-top:15px; border-top:1px solid var(--line); font-size:11px; }
+.member-pass strong { color:var(--paper); }
+.member-controls { display:grid; gap:10px; margin-top:18px; }
+.member-text-button { justify-content:center; }
+.membership-sheet input,.membership-sheet select,.membership-sheet textarea { border-radius:10px; background:var(--panel); color:var(--paper); color-scheme:dark; }
+.membership-sheet option { background:var(--panel); color:var(--paper); }
+.membership-sheet form label { margin:19px 0; }
+.membership-sheet form label input,.membership-sheet form label select { min-height:48px; }
+.invite-confirmation,.likes-empty { padding:22px 0 30px; text-align:center; }
+.invite-confirmation > .material-symbols-rounded,.likes-empty > .material-symbols-rounded { display:inline-grid; place-items:center; width:64px; height:64px; margin-bottom:15px; border:1px solid var(--line); border-radius:50%; color:var(--lime); font-size:34px; }
+.likes-empty h3 { font-size:22px; line-height:1.3; letter-spacing:-.04em; }
+.incoming-likes { list-style:none; padding:0; }
+.incoming-likes li { padding:16px 0; border-bottom:1px solid var(--line); }
+.incoming-likes h3 { margin:0; font-size:22px; }
+.incoming-likes span { display:inline-block; margin:5px 7px 0 0; padding:5px 9px; background:var(--panel-2); border-radius:8px; font-size:11px; }
+.round-button.intent { position:relative; display:grid; place-items:center; overflow:hidden; padding:0; border-color:color-mix(in srgb,var(--paper) 23%,var(--panel)); color:var(--paper); background:linear-gradient(150deg,var(--panel-2),var(--panel)); box-shadow:inset 0 1px color-mix(in srgb,var(--paper) 10%,transparent),0 5px 14px color-mix(in srgb,var(--ink) 30%,transparent); backdrop-filter:none; -webkit-backdrop-filter:none; }
+.round-button.intent .intent-symbol { width:26px; height:26px; fill:none; stroke:currentColor; stroke-width:1.55; stroke-linecap:round; stroke-linejoin:round; }
+.round-button.intent .intent-heart { fill:var(--lime); stroke:var(--lime); stroke-width:1.2; }
+.round-button.intent:hover { border-color:var(--lime); box-shadow:inset 0 1px color-mix(in srgb,var(--paper) 16%,transparent),0 7px 16px color-mix(in srgb,var(--ink) 40%,transparent); }
+.round-button.intent:focus-visible { outline:2px solid var(--lime); outline-offset:4px; }
+@media (prefers-reduced-motion:reduce) { .round-button.intent { transition:none; } .round-button.intent:hover,.round-button.intent:active { transform:none; } }
+@media (max-width:360px) { .modal:has(.membership-sheet) { padding-inline:18px; } .likes-panel.plus-banner { padding:20px; } .membership-sheet h2 { font-size:31px; } }
+.incoming-profile { position:relative; }
+.incoming-profile img { width:100%; max-height:330px; margin-bottom:16px; border-radius:15px; object-fit:cover; }
+.incoming-profile .incoming-age { padding:0; margin:0; background:transparent; font-size:21px; font-weight:400; color:var(--muted); }
+.incoming-profile > .material-symbols-rounded { margin-top:7px; color:var(--lime); }
+.incoming-profile .membership-secondary { margin-top:18px; }
+.membership-sheet header > div { min-width:0; }
+.membership-sheet h2 { overflow-wrap:anywhere; }
+html[lang="zh-CN"] .membership-sheet h2,
+html[lang="zh-CN"] .likes-panel.plus-banner h2 { font-family:Manrope,sans-serif; font-weight:800; letter-spacing:-.04em; }

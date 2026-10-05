@@ -1,0 +1,21 @@
+{
+  "name": "pace-sportdating-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "python3 -m http.server 4173 --bind 127.0.0.1",
+    "check": "node --check app.js && node --check api_client.mjs && node --check app_logic.mjs && node --check connection_feed.mjs && node --check sport_catalog.mjs && node --check pace_repository.mjs && node --check features/app_copy.mjs && node --check features/dom.mjs && node --check features/photo_presentation.mjs && node --check features/onboarding.mjs && node --check features/chat.mjs && node --check features/moments.mjs && node --check features/account.mjs && node --check engagement_service.mjs && node --check features/membership.mjs && node --check features/membership_copy.mjs && node --check features/train.mjs && node --check features/storekit_bridge.mjs && node --check features/activity_seed.mjs && node --check features/launch_assets.mjs",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "node contract_test_cases.mjs && node user_test_cases.mjs && node repository_test_cases.mjs && node photo_presentation_test_cases.mjs && node engagement_test_cases.mjs && node storekit_bridge_test_cases.mjs && node onboarding_startup_test_cases.mjs && node launch_assets_test_cases.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:update": "playwright test --update-snapshots",
+    "verify": "npm run check && npm test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1"
+  }
+}

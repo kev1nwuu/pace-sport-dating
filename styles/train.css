@@ -1,0 +1,125 @@
+/* Editorial sports schedule: one photographic lead, lime dates, and ruled rows. */
+.train-page { --train-photo-shade:rgba(7,8,7,.84); --train-photo-fade:rgba(7,8,7,.04); --train-photo-line:rgba(244,245,239,.2); --train-soft-lime:color-mix(in srgb,var(--lime) 9%,var(--canvas)); padding-bottom:12px; }
+.train-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin:5px 0 23px; }
+.train-heading .eyebrow { margin:0 0 9px; }
+.train-heading #train-title { max-width:340px; font-size:clamp(34px,9.6vw,44px); line-height:.99; letter-spacing:-.07em; overflow-wrap:anywhere; }
+.train-intro { margin:12px 0 0; color:var(--muted); font-size:12px; line-height:1.6; }
+.train-create-icon { display:grid; place-items:center; flex:none; width:44px; height:44px; margin-top:21px; border:1px solid var(--line); border-radius:50%; color:var(--paper); background:var(--panel); }
+.train-create-icon .material-symbols-rounded { font-size:25px; }
+.train-scope { display:flex; gap:25px; border-bottom:1px solid var(--line); }
+.train-scope button { position:relative; min-height:46px; padding:0 2px 13px; border:0; color:var(--muted); background:transparent; font:700 14px/1.3 Manrope,sans-serif; }
+.train-scope button[aria-pressed="true"] { color:var(--paper); }
+.train-scope button[aria-pressed="true"]::after { position:absolute; right:0; bottom:-1px; left:0; height:3px; border-radius:3px 3px 0 0; background:var(--lime); content:""; }
+.train-sports { margin:17px 0 20px; border:1px solid var(--line); border-radius:13px; background:var(--panel); }
+.train-sport-summary { display:flex; align-items:center; gap:14px; min-height:53px; padding:13px 15px; list-style:none; cursor:pointer; }
+.train-sport-summary::-webkit-details-marker { display:none; }
+.train-sport-summary > span:first-child { color:var(--muted); font:500 11px/1.5 Manrope,sans-serif; }
+.train-sport-summary > strong { flex:1; min-width:0; color:var(--paper); font:700 12px/1.5 Manrope,sans-serif; text-align:right; overflow-wrap:anywhere; }
+.train-sport-summary > .material-symbols-rounded { flex:none; color:var(--muted); font-size:21px; transition:transform .18s ease; }
+.train-sports[open] .train-sport-summary { border-bottom:1px solid var(--line); }
+.train-sports[open] .train-sport-summary > .material-symbols-rounded { transform:rotate(180deg); color:var(--lime); }
+.train-sport-summary:focus-visible { outline:2px solid var(--lime); outline-offset:3px; border-radius:12px; }
+.train-sport-panel { padding:12px; }
+.train-sport-search { display:flex; align-items:center; gap:8px; padding:0 11px; border:1px solid var(--line); border-radius:9px; background:var(--canvas); }
+.train-sport-search > .material-symbols-rounded { flex:none; color:var(--muted); font-size:19px; }
+.train-sport-search input { width:100%; min-width:0; min-height:43px; padding:10px 0; border:0; outline:0; color:var(--paper); background:transparent; font:500 12px/1.5 Manrope,sans-serif; color-scheme:dark; }
+.train-sport-search input::placeholder { color:var(--muted); }
+.train-sport-search:focus-within { outline:2px solid var(--lime); outline-offset:2px; }
+.train-sport-count { margin:12px 3px 6px; color:var(--muted); font:500 10px/1.5 Manrope,sans-serif; }
+.train-sport-options { max-height:264px; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-color:var(--line) transparent; }
+.train-sport-option { position:relative; display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:44px; padding:10px 11px; border-bottom:1px solid var(--line); color:var(--paper); font:600 12px/1.5 Manrope,sans-serif; cursor:pointer; }
+.train-sport-option:first-child { margin-bottom:4px; }
+.train-sport-option:last-of-type { border-bottom:0; }
+.train-sport-option input { position:absolute; width:1px; height:1px; margin:0; opacity:0; }
+.train-sport-option > .material-symbols-rounded { flex:none; color:var(--lime); font-size:18px; visibility:hidden; }
+.train-sport-option:has(input:checked) { color:var(--lime); background:var(--train-soft-lime); }
+.train-sport-option:has(input:checked) > .material-symbols-rounded { visibility:visible; }
+.train-sport-option:has(input:focus-visible) { outline:2px solid var(--lime); outline-offset:-2px; border-radius:6px; }
+.train-sport-empty { margin:16px 11px 9px; color:var(--muted); font-size:11px; line-height:1.6; }
+.train-featured { position:relative; display:flex; flex-direction:column; justify-content:space-between; width:100%; min-height:288px; overflow:hidden; padding:18px 18px 0; border:1px solid var(--line); border-radius:22px; color:var(--paper); background:var(--panel); text-align:left; isolation:isolate; }
+.train-featured-image { position:absolute; z-index:-2; inset:0; width:100%; height:100%; object-fit:cover; filter:saturate(.6) brightness(.67); }
+.train-featured-photo::before { position:absolute; z-index:-1; inset:0; background:linear-gradient(180deg,var(--train-photo-fade),var(--train-photo-shade) 77%); content:""; }
+.train-featured-top { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; }
+.train-date { display:flex; flex:none; flex-direction:column; align-items:center; justify-content:center; width:59px; height:64px; border-radius:10px; color:var(--ink); background:var(--lime); }
+.train-date b { font:400 30px/.96 'Archivo Black',sans-serif; letter-spacing:-.06em; }
+.train-date > span { margin-top:5px; font:500 10px/1 'DM Mono',monospace; text-transform:uppercase; }
+.train-kicker { margin-top:5px; color:var(--paper); font:500 9px/1.4 'DM Mono',monospace; letter-spacing:.13em; text-align:right; }
+.train-featured-body { display:flex; flex-direction:column; align-items:flex-start; margin:25px 0 15px; }
+.train-featured-sport { display:flex; align-items:center; gap:6px; margin-bottom:6px; color:var(--lime); font:600 10px/1.4 'DM Mono',monospace; text-transform:uppercase; letter-spacing:.05em; }
+.train-verified { display:inline-flex; }
+.train-verified .material-symbols-rounded { font-size:15px; }
+.train-featured-body > strong { max-width:340px; font:800 26px/1.12 Manrope,sans-serif; letter-spacing:-.06em; overflow-wrap:anywhere; }
+.train-featured-meta { margin-top:9px; font-size:11px; line-height:1.5; }
+.train-featured-location { display:flex; align-items:center; gap:4px; margin-top:4px; color:var(--paper); font-size:11px; line-height:1.5; }
+.train-featured-location .material-symbols-rounded { font-size:14px; }
+.train-featured-footer { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; min-height:51px; border-top:1px solid var(--train-photo-line); font-size:11px; font-weight:700; }
+.train-featured-footer > span:first-child { display:flex; align-items:center; gap:7px; }
+.train-featured-footer .material-symbols-rounded { font-size:19px; }
+.train-featured-arrow { display:grid; place-items:center; width:31px; height:31px; border-radius:50%; color:var(--ink); background:var(--lime); }
+.train-status-going { color:var(--lime); }
+.train-list-heading { display:flex; align-items:center; justify-content:space-between; gap:16px; margin:26px 0 4px; }
+.train-list-heading h2 { margin:0; font:800 15px/1.3 Manrope,sans-serif; letter-spacing:-.035em; }
+.train-list-heading > span { color:var(--muted); font:500 11px 'DM Mono',monospace; }
+.train-activity-row { display:flex; align-items:flex-start; gap:14px; width:100%; padding:19px 0; border:0; border-bottom:1px solid var(--line); color:var(--paper); background:transparent; text-align:left; }
+.train-date-small { width:45px; height:55px; margin-top:4px; border-radius:9px; color:var(--paper); background:var(--panel-2); }
+.train-date-small b { font-size:22px; }
+.train-date-small > span { font-size:9px; color:var(--muted); }
+.train-row-content { display:flex; flex:1; flex-direction:column; min-width:0; }
+.train-row-sport { margin-bottom:4px; color:var(--lime); font:500 9px/1.4 'DM Mono',monospace; letter-spacing:.035em; text-transform:uppercase; }
+.train-row-content > strong { font:800 15px/1.35 Manrope,sans-serif; letter-spacing:-.035em; overflow-wrap:anywhere; }
+.train-row-meta,.train-row-location { margin-top:5px; color:var(--muted); font-size:10px; line-height:1.5; }
+.train-row-location { margin-top:2px; }
+.train-row-status { margin-top:7px; font-size:10px; line-height:1.4; font-weight:700; }
+.train-activity-row > .material-symbols-rounded { flex:none; margin-top:23px; color:var(--muted); font-size:21px; }
+.train-host { margin-top:27px; padding:22px 0 0; }
+.train-plus-label { display:inline-flex; color:var(--lime); font:500 10px/1.2 'DM Mono',monospace; letter-spacing:.12em; }
+.train-host h2 { margin:9px 0 8px; font:800 23px/1.15 Manrope,sans-serif; letter-spacing:-.06em; }
+.train-host p { max-width:320px; margin:0 0 17px; color:var(--muted); font-size:12px; line-height:1.6; }
+.train-primary,.train-secondary { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; min-height:51px; padding:13px 17px; border:1px solid var(--lime); border-radius:14px; color:var(--ink); background:var(--lime); font:800 13px/1.45 Manrope,sans-serif; text-align:left; }
+.train-secondary { border-color:var(--line); color:var(--paper); background:var(--panel); }
+.train-primary .material-symbols-rounded,.train-secondary .material-symbols-rounded { flex:none; font-size:20px; }
+.train-page button,.train-dialog button { transition:background-color .16s ease,border-color .16s ease; }
+.train-page button:focus-visible,.train-dialog button:focus-visible { outline:2px solid var(--lime); outline-offset:4px; }
+.train-page button:disabled,.train-dialog button:disabled { cursor:default; opacity:.5; }
+.train-state { display:flex; flex-direction:column; align-items:flex-start; justify-content:center; min-height:260px; padding:25px 0; }
+.train-state > .material-symbols-rounded { margin-bottom:16px; color:var(--lime); font-size:32px; }
+.train-state h2 { max-width:300px; margin:0 0 10px; font:800 24px/1.15 Manrope,sans-serif; letter-spacing:-.05em; }
+.train-state p { max-width:320px; margin:0 0 18px; color:var(--muted); font-size:12px; line-height:1.6; }
+.train-state .train-secondary { width:auto; min-width:140px; justify-content:center; }
+.train-dialog { --train-soft-lime:color-mix(in srgb,var(--lime) 9%,var(--canvas)); }
+.modal .train-modal-heading { margin-bottom:22px; }
+.modal .train-modal-heading .eyebrow { margin:0 0 10px; color:var(--lime); }
+.modal .train-modal-heading h2 { font:800 27px/1.1 Manrope,sans-serif; text-transform:none; letter-spacing:-.055em; overflow-wrap:anywhere; }
+.train-detail-host { display:flex; align-items:center; gap:10px; padding:0 0 22px; border-bottom:1px solid var(--line); }
+.train-host-avatar { display:grid; place-items:center; flex:none; width:39px; height:39px; border-radius:50%; color:var(--lime); background:var(--panel-2); font:800 15px Manrope,sans-serif; }
+.train-detail-host > span:nth-child(2) { display:flex; flex-direction:column; gap:3px; min-width:0; }
+.train-detail-host small { color:var(--muted); font-size:10px; }
+.train-detail-host strong { font-size:12px; overflow-wrap:anywhere; }
+.train-detail-verified { display:flex; align-items:center; gap:4px; max-width:135px; margin-left:auto; color:var(--lime); font-size:9px; line-height:1.5; }
+.train-detail-verified .material-symbols-rounded { flex:none; font-size:17px; }
+.train-detail-facts { display:grid; gap:18px; margin:24px 0; }
+.train-detail-facts > div { display:grid; grid-template-columns:25px minmax(0,1fr); gap:4px 11px; align-items:start; }
+.train-detail-facts .material-symbols-rounded { grid-row:1/3; margin-top:1px; color:var(--muted); font-size:21px; }
+.train-detail-facts dt { color:var(--muted); font-size:10px; }
+.train-detail-facts dd { margin:0; color:var(--paper); font-size:12px; font-weight:700; line-height:1.5; overflow-wrap:anywhere; }
+.train-detail-plan { padding-top:21px; border-top:1px solid var(--line); }
+.train-detail-plan h3 { margin:0 0 8px; font-size:14px; }
+.modal .train-detail-plan p { margin:0; color:var(--muted); font-size:12px; white-space:pre-wrap; overflow-wrap:anywhere; }
+.modal .train-detail-note { margin:20px 0; padding:13px 14px; border-radius:12px; color:var(--muted); background:var(--panel); font-size:10px; }
+.train-detail-cta { margin-top:20px; }
+.modal .train-detail-free { margin:10px 0 0; color:var(--muted); font-size:9px; text-align:center; }
+.modal .train-create-intro { margin:-5px 0 22px; color:var(--muted); font-size:12px; }
+.modal .train-create-form label { position:relative; gap:8px; margin:19px 0; color:var(--paper); font-size:11px; }
+.modal .train-create-form input,.modal .train-create-form select,.modal .train-create-form textarea { min-height:48px; padding:12px 13px; border:1px solid var(--line); border-radius:11px; color:var(--paper); background:var(--panel); font-size:12px; line-height:1.5; color-scheme:dark; }
+.modal .train-create-form select option { color:var(--paper); background:var(--panel); }
+.modal .train-create-form input:focus-visible,.modal .train-create-form select:focus-visible,.modal .train-create-form textarea:focus-visible { outline:2px solid var(--lime); outline-offset:2px; }
+.modal .train-create-form input::placeholder,.modal .train-create-form textarea::placeholder { color:var(--muted); }
+.modal .train-create-form input[type="datetime-local"] { display:block; min-width:0; max-width:100%; }
+.modal .train-create-form small { color:var(--muted); font-size:9px; font-weight:400; }
+.train-optional { position:absolute; top:0; right:0; color:var(--muted); font-size:10px; font-weight:400; }
+.modal .train-create-notice { margin:21px 0; color:var(--muted); font-size:10px; line-height:1.6; }
+.modal .train-form-error { padding:12px; border:1px solid var(--orange); border-radius:10px; color:var(--paper); background:var(--panel); font-size:11px; }
+.train-form-error[hidden] { display:none; }
+@media (hover:hover) { .train-create-icon:hover,.train-secondary:hover { border-color:var(--lime); }.train-activity-row:hover { background:var(--panel); }.train-primary:hover { background:color-mix(in srgb,var(--lime) 85%,var(--paper)); }.train-featured:hover { border-color:var(--lime); } }
+@media (max-width:360px) { .train-heading #train-title { font-size:32px; }.train-heading { gap:8px; }.train-featured { min-height:270px; padding-right:15px; padding-left:15px; }.train-featured-body > strong { font-size:24px; }.train-detail-verified { max-width:100px; }.train-scope { gap:22px; } }
+@media (prefers-reduced-motion:reduce) { .train-page button,.train-dialog button,.train-sport-summary > .material-symbols-rounded { transition:none; } }

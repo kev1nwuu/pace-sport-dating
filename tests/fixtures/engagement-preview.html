@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <base href="../../">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PACE engagement test fixture</title>
+    <link rel="stylesheet" href="../../styles.css?v=pace-release-audit-58">
+    <style>
+      body { padding-top:100px; }
+      .fixture-controls { position:fixed; z-index:100; top:0; left:50%; display:flex; flex-wrap:wrap; align-items:center; gap:8px; width:min(100%,520px); padding:10px 14px; transform:translateX(-50%); border-bottom:1px solid var(--line); color:var(--paper); background:var(--ink); font:600 10px/1.5 Manrope,sans-serif; }
+      .fixture-controls strong { width:100%; color:var(--lime); }
+      .fixture-controls button,.fixture-controls a { padding:6px 9px; border:1px solid var(--line); border-radius:7px; color:var(--paper); background:var(--panel); font:inherit; text-decoration:none; }
+      .fixture-controls [data-fixture-status] { margin-left:auto; color:var(--lime); }
+      .fixture-actions { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 24px; padding-bottom:18px; border-bottom:1px solid var(--line); }
+      .fixture-actions button { min-height:40px; padding:10px 13px; border:1px solid var(--line); border-radius:12px; color:var(--paper); background:var(--panel); font-size:12px; }
+      .fixture-note { margin:0 0 15px; color:var(--muted); font-size:10px; line-height:1.5; }
+      .fixture-shell { min-height:calc(100dvh - 100px); padding-bottom:35px; }
+      #modal-root { z-index:90; }
+      .fixture-controls button:focus-visible,.fixture-actions button:focus-visible { outline:2px solid var(--lime); outline-offset:3px; }
+    </style>
+  </head>
+  <body>
+    <aside class="fixture-controls" aria-label="Test fixture controls">
+      <strong>TEST FIXTURE · isolated data, no payment processing</strong>
+      <button type="button" data-expire-plus>Expire Plus</button>
+      <a href="tests/fixtures/engagement-preview.html">Reset fixture</a>
+      <span data-fixture-status role="status">Plus active</span>
+    </aside>
+    <main class="app-shell fixture-shell">
+      <p class="fixture-note">Uses the production Train, membership UI and repository policy. Expire Plus advances the repository clock while an open form keeps its current state.</p>
+      <nav class="fixture-actions" aria-label="Test flows">
+        <button type="button" data-open-invite>Invite Maya</button>
+        <button type="button" data-open-plus>View Plus</button>
+        <button type="button" data-open-billing>Billing</button>
+      </nav>
+      <section id="train-view" class="view active" aria-labelledby="train-title"></section>
+    </main>
+    <div id="modal-root" class="modal-root hidden" aria-hidden="true">
+      <div class="scrim" data-action="close-modal"></div>
+      <section id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"></section>
+    </div>
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"><span class="toast-message"></span></div>
+    <script type="module">
+      import { createLocalPaceRepository } from "../../pace_repository.mjs?v=pace-release-audit-58";
+      import { createMembershipFeature } from "../../features/membership.mjs?v=pace-release-audit-58";
+      import { createTrainFeature } from "../../features/train.mjs?v=pace-release-audit-58";
+      import { createPreviewActivities } from "../../features/activity_seed.mjs?v=pace-release-audit-58";
+
+      let serverClockOffset = 0;
+      const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+      const repository = createLocalPaceRepository({
+        actor: { id:"user_kevin", name:"Kevin", verified:true },
+        users: [{ id:"maya", name:"Maya", verified:true }],
+        activities: createPreviewActivities(),
+        membership: { tier:"plus", status:"active", expiresAt, autoRenews:true, source:"test-fixture" },
+        now: () => Date.now() + serverClockOffset,
+      });
+      const modalRoot = document.querySelector("#modal-root");
+      const modal = document.querySelector("#modal");
+      const shell = document.querySelector(".app-shell");
+      let trigger = null;
+      let toastTimer = null;
+      function closeModal() {
+        modalRoot.classList.add("hidden");
+        modalRoot.setAttribute("aria-hidden", "true");
+        modal.replaceChildren();
+        document.body.classList.remove("modal-open");
+        shell.removeAttribute("inert");
+        if (trigger?.isConnected) trigger.focus();
+        else document.querySelector(".train-create-icon")?.focus();
+        trigger = null;
+      }
+      function openModal(content) {
+        if (modalRoot.classList.contains("hidden")) trigger = document.activeElement;
+        modal.innerHTML = content;
+        modalRoot.classList.remove("hidden");
+        modalRoot.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+        shell.setAttribute("inert", "");
+        modal.querySelector(".close,button,input,select,textarea")?.focus();
+      }
+      function showToast(message) {
+        const toast = document.querySelector("#toast");
+        clearTimeout(toastTimer);
+        toast.querySelector(".toast-message").textContent = message;
+        toast.classList.remove("hidden");
+        toastTimer = setTimeout(() => toast.classList.add("hidden"), 3500);
+      }
+      const membership = createMembershipFeature({ repository, bridge:{ isAvailable:() => false }, getLanguage:() => "en", modalElement:modal, openModal, closeModal, showToast, likesRoot:null });
+      const train = createTrainFeature({ root:document.querySelector("#train-view"), repository, getLanguage:() => "en", openModal, closeModal, showToast, onUpgrade:(reason) => membership.openPlus(reason) });
+      document.querySelector("[data-open-invite]").addEventListener("click", () => membership.openDirectInvite({id:"maya",name:"Maya"}));
+      document.querySelector("[data-open-plus]").addEventListener("click", () => membership.openPlus());
+      document.querySelector("[data-open-billing]").addEventListener("click", () => membership.openBilling());
+      document.querySelector("[data-expire-plus]").addEventListener("click", async (event) => {
+        serverClockOffset = Math.max(0, Date.parse(expiresAt) - Date.now()) + 1000;
+        event.currentTarget.disabled = true;
+        const state = await repository.getMembership();
+        document.querySelector("[data-fixture-status]").textContent = `${state.tier.toUpperCase()} · ${state.status}`;
+      });
+      document.addEventListener("click", (event) => { if (event.target.closest('[data-action="close-modal"]')) closeModal(); });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !modalRoot.classList.contains("hidden")) closeModal();
+      });
+      await train.refresh();
+    </script>
+  </body>
+</html>

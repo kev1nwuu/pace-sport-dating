@@ -1,0 +1,33 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+coverage/
+node_modules/
+playwright-report/
+test-results/
+.pnpm-store/
+.npm/
+.cache/
+blob-report/
+*.log
+
+# Local credentials, signing material, databases, and personal tool settings.
+.npmrc
+*.p8
+*.p12
+*.pfx
+*.pem
+*.key
+*.mobileprovision
+*.sqlite
+*.sqlite3
+*.db
+.codex/
+.agents/
+.idea/
+.vscode/
+
+# Historical local review exports; keep runtime assets and test baselines.
+/qa-*.jpg
+/artifacts/
