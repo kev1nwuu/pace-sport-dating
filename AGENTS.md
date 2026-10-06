@@ -1,6 +1,6 @@
 # PACE contributor entry point
 
-Before changing this project, read `PROJECT_HANDOFF.txt` sections 0–4 for the current product decisions, implementation limits, and authorization boundary. Read sections 7–10 when changing architecture, security, tests, or collaboration workflow. This file is the router; the TXT is the main handoff for humans and agents.
+Before changing this project, read `PROJECT_HANDOFF.txt` sections 0–4 for the current product decisions, implementation limits, and authorization boundary. Read sections 7–10 when changing architecture, security, tests, or collaboration workflow. This file is the router; the TXT is the main handoff for humans and agents. Maintain first-party project documentation in English; see handoff section 10 for scope.
 
 ## Current boundary
 
