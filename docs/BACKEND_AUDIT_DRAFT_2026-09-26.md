@@ -1,158 +1,158 @@
-# PACE 后端上线前审计与验收用例草案
+# PACE Backend Pre-Launch Audit and Acceptance Test Draft
 
-审计日期：2026-09-26。范围：当前仓库源码、已有 API 边界、参考业务规则和测试。**只做审计与用例设计，没有实现、修改或部署后端。** 以下用例是待用户审阅的验收规格，不代表生产服务已通过。用户明确下达后端实施命令后，才把已确认的规格转为先失败的集成测试，再实现服务。
+Audit date: 2026-09-26. Scope: the current repository source, existing API boundaries, reference business rules, and tests. **This work is limited to auditing and designing test cases; no backend has been implemented, modified, or deployed.** The cases below are acceptance specifications for the user to review, not evidence that a production service has passed. Only after the user explicitly authorizes backend implementation should the confirmed specifications become failing integration tests, followed by service implementation.
 
-## 结论与证据
+## Findings and evidence
 
-目前是可交互的前端原型，有 HTTP 接口适配层和内存中的业务规则参考实现，**没有运行中的应用后端、数据库、真实账号系统、真实消息投递或 App Store 验证器**。`package.json` 的启动项是 Python 静态文件服务器；`index.html:7` 选择 `local`；`app.js:26–31` 注入演示用户和动态。把 adapter 改成 `http` 不能直接上线。
+The project is currently an interactive frontend prototype with an HTTP adapter layer and an in-memory reference implementation of business rules. **It has no running application backend, database, real account system, real message delivery, or App Store verifier.** The start command in `package.json` runs a Python static file server; `index.html:7` selects `local`; `app.js:26–31` injects demo users and posts. Switching the adapter to `http` does not make the product ready to launch.
 
-### 当前真实完成到哪一层
+### What is actually implemented
 
-| 模块 | 已有内容 | 上线缺口 | 源码依据 |
+| Module | Existing implementation | Launch gaps | Source evidence |
 | --- | --- | --- | --- |
-| 认证与自动登录 | 登录、session、退出、完成 onboarding 的 HTTP 方法；本地 30 天预览标记；启动页错误重试 | 无注册 API、密码存储、邮件验证/找回、Google/Apple 真实登录、服务端 session 或设备撤销 | `api_client.mjs:56–70`；`pace_repository.mjs:17–74,110–128`；`features/onboarding.mjs:303–311,539–545` |
-| Onboarding | 姓名、生日、城市、身份、意向、运动、图片等表单 | 注册时密码仅本地校验；姓名/生日/城市/身份/意向未完整进入 profile 保存；无服务端 18+ 或完成度验证 | `features/onboarding.mjs:303–385` |
-| 资料与照片 | 编辑、显示隐私开关、最多 6 张照片；profile PATCH 边界 | 无 `GET /me` 恢复账号资料；照片是 `blob:` 临时地址；没有上传、完成确认、审核、撤销、持久排序流程 | `features/account.mjs:22–35,107–112,355–385`；`features/onboarding.mjs:259–264` |
-| 发现与匹配 | 项目/距离查询参数；独立 mutual-like 辅助函数 | 点 Like 直接弹 Maya 匹配，未调用辅助函数或 API；每日 Like 数只在内存递减；候选卡内容仍以演示人物为主 | `app.js:26,298–304,325–345`；`app_logic.mjs:12–27` |
-| Chat / Profile | 两个 tab、对方资料展示、消息编辑框 | 发送只追加 DOM，重新进入丢失；无 conversation ID、成员鉴权、消息 API、状态、历史、未读、实时连接 | `features/chat.mjs:63–102` |
-| 已匹配邀约 | 表单与成功提示 | 提交仅关闭弹窗/toast；没有持久化、收件方、真实收件箱或状态；和 Plus direct invite 是两条实现 | `features/chat.mjs:126–152`；`app.js:533` |
-| 未匹配邀约与 Plus | 入口检查、发起 API；参考服务验证匹配/会员/双向拉黑/未来时间/重复请求 | 真实数据库事务、额度/防骚扰、收件人接受/拒绝/改期、通知、过期处理均缺失 | `features/membership.mjs:140–178`；`engagement_service.mjs:112–120,243–255` |
-| 动态 | 列表、点赞、评论、发布的 HTTP 边界；头像进入 Profile | 发布请求含硬编码作者/认证/时间与 blob 图片；服务端须自行派生身份；媒体 upload 方法存在但 UI 未用；分页结果只读取 items；无删除/举报后台 | `features/moments.mjs:80–82,242–285`；`api_client.mjs:89–102`；`pace_repository.mjs:213–233` |
-| 公开活动 | 完整前端读取/参加/退出/创建；参考服务 Plus + 认证主持人检查、人数上限、幂等 | 没有实际持久化与跨进程并发锁；缺编辑/取消/人员管理/通知/地理筛选及完整活动生命周期 | `features/train.mjs:129,189–210,240–284`；`engagement_service.mjs:187–239` |
-| Apple 订阅 | 原生桥接口、商品/购买/恢复/管理 UI；参考服务验证账号/产品/环境绑定、期限和旧状态重放 | 无原生 iOS target、真实 StoreKit、生产 Apple verifier、证书配置、通知 webhook、队列/定时对账、App Store Connect 产品 | `features/storekit_bridge.mjs`；`features/membership.mjs:45–137`；`engagement_service.mjs:258–302` |
-| 认证徽章/运动来源 | 引导页面、种子 verified 字段 | 完成验证只 toast；隐私页 Garmin 显示已连接是固定文案；无摄像/活体供应商或运动数据 OAuth | `app.js:510–522,584`；`features/account.mjs:142–151` |
-| 删除与隐私 | 确认界面、marketing 辅助函数 | 删除只设内存时间并 toast，没有删除/停用/清会话；营销默认内存 true；无导出/同意记录/保留删除任务 | `features/account.mjs:22–24,164–172`；`app_logic.mjs:30–31` |
-| 通知、安全、运营 | 空通知提示；参考规则可拒绝部分拉黑关系 | 无推送、举报/拉黑管理、审核工作台、邮件、日志告警、备份、CI 服务配置 | `app.js:589–593`；`engagement_service.mjs:62–75`；项目文件清单 |
+| Authentication and automatic sign-in | HTTP methods for sign-in, session, sign-out, and onboarding completion; a local 30-day preview marker; retry on startup errors | No registration API, password storage, email verification/recovery, real Google/Apple sign-in, server session, or device revocation | `api_client.mjs:56–70`; `pace_repository.mjs:17–74,110–128`; `features/onboarding.mjs:303–311,539–545` |
+| Onboarding | Forms for name, date of birth, city, identity, intent, sports, photos, and other fields | Registration passwords are only validated locally; name/date of birth/city/identity/intent are not fully included in profile persistence; no server-side 18+ or completion validation | `features/onboarding.mjs:303–385` |
+| Profiles and photos | Editing, visibility toggles, up to 6 photos, and a profile PATCH boundary | No `GET /me` to restore account information; photos use temporary `blob:` URLs; no upload, completion confirmation, moderation, revocation, or persistent ordering workflow | `features/account.mjs:22–35,107–112,355–385`; `features/onboarding.mjs:259–264` |
+| Discovery and matching | Sport/distance query parameters; a separate mutual-like helper | Tapping Like immediately opens a Maya match dialog without calling the helper or an API; the daily Like count decreases only in memory; candidate cards still mainly contain demo profiles | `app.js:26,298–304,325–345`; `app_logic.mjs:12–27` |
+| Chat / Profile | Two tabs, the other person's profile, and a message composer | Sending only appends to the DOM and messages disappear on re-entry; no conversation ID, membership authorization, message API, status, history, unread state, or realtime connection | `features/chat.mjs:63–102` |
+| Invitations within a match | Form and success feedback | Submission only closes the dialog and shows a toast; no persistence, recipient, real inbox, or status; implemented separately from Plus direct invitations | `features/chat.mjs:126–152`; `app.js:533` |
+| Invitations before matching and Plus | Entry checks and a creation API; the reference service validates match/membership status, blocks in either direction, future time, and duplicate requests | No real database transactions, quotas/anti-harassment controls, recipient acceptance/decline/rescheduling, notifications, or expiry handling | `features/membership.mjs:140–178`; `engagement_service.mjs:112–120,243–255` |
+| Moments | HTTP boundaries for listing, reacting, commenting, and publishing; author avatars open Profile | Publish requests contain a hardcoded author, verification status, timestamp, and blob images; the server must derive identity itself; a media upload method exists but the UI does not use it; only items are read from paginated results; no deletion/reporting backend | `features/moments.mjs:80–82,242–285`; `api_client.mjs:89–102`; `pace_repository.mjs:213–233` |
+| Public activities | Complete frontend flows for reading, joining, leaving, and creating; reference service checks Plus + verified host status, capacity, and idempotency | No actual persistence or cross-process concurrency locking; missing editing, cancellation, participant management, notifications, geographic filtering, and the complete activity lifecycle | `features/train.mjs:129,189–210,240–284`; `engagement_service.mjs:187–239` |
+| Apple subscriptions | Native bridge interface; product, purchase, restore, and management UI; reference service validates account/product/environment binding, validity periods, and replay of stale state | No native iOS target, real StoreKit integration, production Apple verifier, certificate configuration, notification webhook, queue/scheduled reconciliation, or App Store Connect products | `features/storekit_bridge.mjs`; `features/membership.mjs:45–137`; `engagement_service.mjs:258–302` |
+| Verification badges and activity data sources | Introductory screens and seeded verified fields | Completing verification only shows a toast; the privacy page's Garmin connected status is hardcoded copy; no camera/liveness provider or activity-data OAuth | `app.js:510–522,584`; `features/account.mjs:142–151` |
+| Deletion and privacy | Confirmation UI and a marketing helper | Deletion only sets an in-memory timestamp and shows a toast, without deleting/deactivating the account or clearing sessions; marketing defaults to true in memory; no export, consent records, or retention/deletion jobs | `features/account.mjs:22–24,164–172`; `app_logic.mjs:30–31` |
+| Notifications, safety, and operations | Empty notification feedback; reference rules reject some blocked relationships | No push notifications, reporting/block management, moderation console, email, logging/alerts, backups, or CI service configuration | `app.js:589–593`; `engagement_service.mjs:62–75`; repository file inventory |
 
-`BACKEND_READINESS.md` 中的“九个操作”“13 modules”“29/29”等为旧基线，不能作本次验收结论。当前 API 层比旧表多，但服务仍未部署；已有参考服务测试也不能证明实际数据库并发或 Apple 付款流程通过。
+The references to “nine operations,” “13 modules,” and “29/29” in `BACKEND_READINESS.md` describe an older baseline, not this audit's acceptance result. The current API layer has more methods than that older table, but the service is still not deployed. Existing reference-service tests do not prove that real database concurrency or Apple payment flows pass.
 
-### 两个需要提前统一的数据问题
+### Two data issues to reconcile early
 
-1. 同一个 Maya 在发现卡使用 `maya`，动态使用 `user_maya`（`app.js:26,587` 与 `connection_feed.mjs:5`）。真实服务应统一 user ID，所有资料、聊天、邀约、拉黑与付款身份均使用服务器返回的稳定 ID。
-2. 前端 `openConversation` 可以收到任何人物，默认插入演示对话；它不构成“这个用户确实已匹配并允许聊天”的证明。生产 chat 路由必须验证真实 conversation 成员和当前关系。
+1. The same Maya uses `maya` on the discovery card and `user_maya` in Moments (`app.js:26,587` and `connection_feed.mjs:5`). The real service must use consistent user IDs. All profile, chat, invitation, block, and payment identities must use stable IDs returned by the server.
+2. The frontend's `openConversation` can receive any person and inserts a demo conversation by default. It is not proof that this user is actually matched and allowed to chat. Production chat routes must validate actual conversation membership and the current relationship.
 
-## 后端完善清单（可交付范围）
+## Backend completion backlog and deliverable scope
 
-优先级：P0 = 对外上线阻断；P1 = 首次公开发布需完成，或明确从首发移除；P2 = 可以后续增强。接口路径已存在的沿用；新路径在 OpenAPI 评审中确定，本清单不假装它们已经存在。
+Priorities: P0 = blocks external launch; P1 = must be completed for the first public release or explicitly removed from that release; P2 = can be enhanced later. Reuse existing endpoint paths. Define new paths during OpenAPI review; this backlog does not imply they already exist.
 
-| ID | 优先级 | 要交付的模块与完成条件 |
+| ID | Priority | Module and completion criteria |
 | --- | --- | --- |
-| B01 | P0 | **持久数据与接口基础**：选定服务运行环境与数据库；版本化迁移、测试 seed；OpenAPI 请求/响应 schema；统一错误 `code/message/fieldErrors/requestId/retryable`；身份与权限中间件；各环境隔离；所有客户端传来的 actor/author/verified/entitlement 忽略或拒绝。 |
-| B02 | P0 | **账号与 session**：邮箱注册/登录、验证/找回、Google/Apple token 验证与安全账号关联；重复邮箱策略；短期访问与长期恢复凭据、轮换/撤销、多设备；Web cookie/CSRF 与原生安全存储策略；限速；注销后立即失效。 |
-| B03 | P0 | **Onboarding 与资格**：服务器校验生日/年龄、必填字段、至少一张合格照片、运动；保存阶段与恢复；完成与未完成权限区分；条款/隐私版本确认记录；防止直接调用 complete 跳过要求。 |
-| B04 | P0 | **资料与发现偏好**：读写本人、读取他人允许公开的资料；身份/意向/城市等完整字段；隐藏身高/族裔时 API 也不泄漏；保留精确生日与粗化距离；规范运动 ID、自定义运动规则；版本冲突处理和删号过滤。 |
-| B05 | P0 | **媒体服务**：限时上传票据、对象存储、上传完成与归属校验、内容解码/大小/数量/恶意文件检查、缩略图、EXIF 精确定位剥离；审核状态；保存焦点与顺序；引用保护、删除和孤立文件清理；拒绝 blob/任意外部 URL 作为正式媒体。 |
-| B06 | P0 | **发现与 Like**：服务器匹配条件/范围/用户资格/排除列表；游标分页；真实 Like/Pass；日额度和重置规则；互相 Like 的唯一 match 与 conversation 原子创建；空地区诚实返回；撤销匹配/拉黑立即影响读写。 |
-| B07 | P0 | **聊天**：匹配列表、会话列表/成员权限、历史分页、消息持久化/幂等、发送中/失败/送达、未读、重连增量与多设备一致；阻止陌生人任意发消息；不依赖在线 WebSocket 成功才保存；推送仅在提交成功后。 |
-| B08 | P0 | **统一邀约状态机**：聊天免费邀约与未匹配 Plus 邀约使用同一领域服务；发起时重查会员/匹配/双向拉黑/对方状态；pending→accepted/declined/cancelled/expired，改期有版本；通知和收件箱；接受后的匹配/会话规则待确认；防重复、过期和骚扰额度。 |
-| B09 | P1 | **动态**：仅本人及真实允许的 connections；点赞唯一键和评论权限；游标分页、删除/编辑范围、作者身份服务端生成、媒体归属、输入长度、审核、反垃圾；解除关系/拉黑后的访问不可仅靠前端过滤。 |
-| B10 | P1 | **公开活动**：附近和 joined/hosting 列表；事务内人数上限与参加者唯一键；主持人验证与 Plus；创建/编辑/取消；最后席位并发、退出重试；取消/改时间通知；屏蔽和主持人停用；已开始/已结束状态及保留策略。 |
-| B11 | P0（首发售卖时） | **订阅服务**：生产/Sandbox 配置隔离；App Store JWS 验签、实时状态查询、稳定 appAccountToken、原始交易唯一所有权；事务持久化；Notifications V2 外层/内层验签、去重、乱序、退款/撤销/恢复；到期时即使 webhook 未到也拒绝新权益；定时对账和支付后网络失败恢复。浏览器不能购买时保持明确不可用。 |
-| B12 | P0 | **真人认证与信任**：确定必经规则；验证会话、供应商签名回调/重放保护；pending/verified/rejected/expired 状态；最少化保存与删除；禁止由 PATCH 或客户端完成按钮设置 verified；按服务端状态显示徽章。 |
-| B13 | P0 | **用户安全与审核**：举报用户/消息/动态/活动，双向拉黑、取消匹配；审核工作台、权限、处理证据、审计日志、申诉；对封禁的实时鉴权；反刷/反骚扰；明确运营接收渠道与处理负责人。 |
-| B14 | P0 | **删除、隐私与同意**：确认删号、立即停用/撤销 session/停止营销/退出发现；异步清除媒体和个人数据并可查询进度；需要保留的交易/滥用证据按已批准政策隔离；导出本人数据；营销 opt-in 及撤回记录；删除账号与订阅管理说明准确。 |
-| B15 | P1 | **通知服务**：APNs token 绑定/轮换/失效；事务 outbox、重试/去重；未读和深链接；用户偏好；锁屏内容最小化；退出登录/更换账号后不会错投；仅对真实提交成功事件发送。 |
-| B16 | P1 或移出首发 | **运动数据接入**：如保留 Strava/Garmin/Health：真实授权、撤销、同步范围、来源/时间、重复同步、权限关闭、token 加密；默认不展示精确路线。不实现则删除“已连接”等误导状态。 |
-| B17 | P0 | **部署、安全与可观测性**：HTTPS、密钥管理、依赖更新、最小数据库权限；结构化日志但排除密码/token/私密消息；指标/请求关联/异常告警；任务队列死信；自动部署回滚、备份恢复演练；服务资源限额；静态缓存版本与 API 兼容。 |
-| B18 | P0 | **发布验收**：隔离 staging 真实多账号走通；实际设备/弱网/断网/前后台/冷启动/重复操作；负载/恢复测试；Apple 原生签名包和 sandbox 购买；真实 Terms/Privacy/支持入口、商店资料与当前平台审核要求复核；明确发布监控和回滚负责人。 |
+| B01 | P0 | **Persistent data and API foundations**: choose the service runtime and database; versioned migrations and test seeds; OpenAPI request/response schemas; consistent errors with `code/message/fieldErrors/requestId/retryable`; identity and authorization middleware; environment isolation; ignore or reject all client-supplied actor/author/verified/entitlement values. |
+| B02 | P0 | **Accounts and sessions**: email registration/sign-in, verification/recovery, Google/Apple token verification, and secure account linking; duplicate-email policy; short-lived access credentials and long-lived session-renewal credentials, rotation/revocation, and multiple devices; Web cookie/CSRF and native secure-storage strategies; rate limiting; immediate invalidation after sign-out. |
+| B03 | P0 | **Onboarding and eligibility**: server validation of date of birth/age, required fields, at least one eligible photo, and sports; stage persistence and recovery; different permissions for completed/incomplete onboarding; records of accepted Terms/Privacy versions; prevent direct calls to complete from bypassing requirements. |
+| B04 | P0 | **Profiles and discovery preferences**: read/write the user's own profile and read only others' permitted public information; complete identity/intent/city and other fields; APIs must not leak hidden height/ethnicity values; retain the precise date of birth privately and coarsen public distance; canonical sport IDs and custom-sport rules; version-conflict handling and filtering of deleted accounts. |
+| B05 | P0 | **Media service**: time-limited upload grants, object storage, upload completion and ownership checks, content decoding, size/count/malicious-file checks, thumbnails, and removal of precise location from EXIF; moderation status; saved focal points and ordering; reference protection, deletion, and orphan cleanup; reject blob/arbitrary external URLs as production media. |
+| B06 | P0 | **Discovery and Likes**: server-side matching criteria, geographic scope, user eligibility, and exclusion lists; cursor pagination; real Like/Pass records; daily quotas and reset rules; atomic creation of a unique match and conversation for mutual Likes; honest empty results for empty areas; unmatching/blocking immediately affects reads and writes. |
+| B07 | P0 | **Chat**: match lists, conversation lists/membership authorization, paginated history, persistent/idempotent messages, sending/failed/delivered states, unread state, incremental recovery on reconnection, and cross-device consistency; prevent arbitrary messages from strangers; save messages independently of a successful live WebSocket connection; send push notifications only after a successful commit. |
+| B08 | P0 | **Unified invitation state machine**: free invitations within a match and Plus invitations before matching use the same domain service; recheck membership, match status, blocks in either direction, and the recipient's status on creation; pending→accepted/declined/cancelled/expired, with versioned rescheduling; notifications and inbox; rules for matches/conversations after acceptance remain to be confirmed; duplicate prevention, expiry, and anti-harassment quotas. |
+| B09 | P1 | **Moments**: access limited to the author and actual permitted connections; unique reaction keys and comment permissions; cursor pagination, deletion/editing scope, server-derived author identity, media ownership, input limits, moderation, and spam protection; access after unmatching/blocking must not depend only on frontend filtering. |
+| B10 | P1 | **Public activities**: nearby and joined/hosting lists; capacity limits enforced within transactions and unique attendance keys; host verification and Plus; creation/editing/cancellation; concurrency for the last place and safe leave retries; cancellation/time-change notifications; blocks and host deactivation; started/finished states and retention policy. |
+| B11 | P0 (if sold at launch) | **Subscription service**: isolated production/Sandbox configuration; App Store JWS signature verification, current-status queries, stable appAccountToken, exclusive ownership of original transactions; transactional persistence; verification of outer/inner Notifications V2 signatures, deduplication, out-of-order handling, refunds/revocations/restores; reject new entitlement-based actions after expiry even when the webhook has not arrived; scheduled reconciliation and recovery from network failure after payment. Keep purchasing explicitly unavailable in browsers that cannot purchase. |
+| B12 | P0 | **Identity verification and trust**: confirm mandatory verification rules; verification sessions, signed provider callbacks/replay protection; pending/verified/rejected/expired states; minimal retention and deletion; prevent PATCH requests or client completion buttons from setting verified; display badges according to server state. |
+| B13 | P0 | **User safety and moderation**: reports for users/messages/posts/activities, blocking enforced in both directions, and unmatching; moderation console, permissions, case evidence, audit logs, and appeals; realtime authorization checks for bans; anti-abuse/anti-harassment controls; a defined operational intake channel and responsible owner. |
+| B14 | P0 | **Deletion, privacy, and consent**: confirmed account deletion, immediate deactivation/session revocation/marketing suppression/removal from discovery; asynchronous cleanup of media and personal data with visible progress; isolate transaction/abuse evidence that must be retained under the approved policy; export the user's own data; marketing opt-in and withdrawal records; accurate account-deletion and subscription-management explanations. |
+| B15 | P1 | **Notification service**: APNs token binding/rotation/invalidation; transactional outbox, retries/deduplication; unread state and deep links; user preferences; minimal lock-screen content; no misdelivery after sign-out or account switching; send only for actual successfully committed events. |
+| B16 | P1 or remove from launch | **Activity data integrations**: if Strava/Garmin/Health are retained, implement real authorization, revocation, sync scope, source/timestamps, duplicate sync handling, permission withdrawal, and token encryption; do not display precise routes by default. If not implemented, remove misleading connected states. |
+| B17 | P0 | **Deployment, security, and observability**: HTTPS, secret management, dependency updates, least-privilege database access; structured logs that exclude passwords/tokens/private messages; metrics, request correlation, and error alerts; dead-letter handling for job queues; automated deployment and rollback, and backup restoration drills; service resource limits; static cache versioning and API compatibility. |
+| B18 | P0 | **Release acceptance**: end-to-end flows with real separate accounts in isolated staging; physical devices, poor networks, offline operation, foreground/background transitions, cold starts, and repeated actions; load/recovery tests; a signed native Apple build and Sandbox purchases; real Terms/Privacy/support destinations, store materials, and a review of current platform requirements; named owners for release monitoring and rollback. |
 
-建议数据实体：User / AuthIdentity / Session / Onboarding / Profile / DiscoveryPreference / MediaAsset / Verification / LikeDecision / Match / Conversation / Message / ReadCursor / Invitation / Post / PostReaction / Comment / Activity / Attendance / Block / Report / ModerationAction / Subscription / AppleTransaction / BillingEvent / Notification / DeviceToken / Consent / DeletionJob / IdempotencyRecord / OutboxEvent。它们是候选领域边界，不要求一对一建表，具体结构由 OpenAPI 与状态规则确定后设计。
+Suggested entities: User / AuthIdentity / Session / Onboarding / Profile / DiscoveryPreference / MediaAsset / Verification / LikeDecision / Match / Conversation / Message / ReadCursor / Invitation / Post / PostReaction / Comment / Activity / Attendance / Block / Report / ModerationAction / Subscription / AppleTransaction / BillingEvent / Notification / DeviceToken / Consent / DeletionJob / IdempotencyRecord / OutboxEvent. These are candidate domain boundaries, not a requirement for one table per entity. Design the concrete structure after agreeing on OpenAPI contracts and state rules.
 
-## 先写的后端验收 test cases
+## Backend acceptance test cases to write first
 
-所有下面的测试默认对真实 staging HTTP + 数据库执行，而不是直接调用浏览器里的 `createEngagementService`。涉及 Apple 的测试分“可控 verifier 的服务集成测试”和“真实 Apple Sandbox 端到端测试”两层，两层证据分别报告。
+By default, all tests below run against real staging HTTP endpoints and a database, rather than directly calling the browser's `createEngagementService`. Apple tests have two layers: service integration tests with a controllable verifier, and end-to-end tests against the real Apple Sandbox. Report evidence for the two layers separately.
 
-基础测试人群：A 免费、B 有效 Plus、C 曾付费但到期、D 被封禁；A↔B 已匹配；B↔C 未匹配；A↔D 双向屏蔽之一成立；另设有/无认证的主持人。所有姓名、媒体和交易证据使用测试数据。
+Base test population: A is free, B has active Plus, C previously paid but is now expired, and D is banned. A↔B are matched; B↔C are not matched; a block exists in at least one direction between A↔D. Include verified and unverified hosts. Use test data for all names, media, and transaction evidence.
 
-| 用例 | 对应 | Given（前提） | When（动作） | Then（验收结果） |
+| Case | Coverage | Given (precondition) | When (action) | Then (acceptance result) |
 | --- | --- | --- | --- | --- |
-| BE-01 | B01/B02 | 无 session 或伪造 actorId | 读取本人资料/消息/会员、执行任意 mutation | 401；零持久写入；响应不泄漏目标是否存在 |
-| BE-02 | B02 | 已存在邮箱/新的 OAuth provider 身份 | 注册或关联账号 | 按批准的关联策略执行；不因相同邮箱字符串未经验证合并账号 |
-| BE-03 | B02 | 有效注册信息与验证流程 | 完成注册并重启客户端/服务器 | 同一持久 user ID 可恢复；密码不以明文存储或写日志 |
-| BE-04 | B02 | 无效 Google/Apple token、错误 audience/nonce、过期 token | 尝试 provider 登录 | 拒绝；不创建已验证账号；重放不绕过 |
-| BE-05 | B02 | 过期/已使用的验证或密码重置链接 | 再次兑换 | 拒绝且不修改账号；有效重置后按策略撤销旧 session |
-| BE-06 | B02 | 正常长期 session、临近到期 | 冷启动、续期和并发恢复 | 不反复询问登录；轮换安全；真实失效回登录，网络错误可重试 |
-| BE-07 | B02 | 已登录两个设备 | 退出当前设备/撤销所有设备 | 对应 scope session 立即失效；旧凭据不能继续发消息/邀约 |
-| BE-08 | B02/B17 | 同一身份/IP 快速错误登录 | 超过批准阈值 | 稳定 429/Retry-After；不泄漏邮箱存在性；正常用户有恢复路径 |
-| BE-09 | B03 | 小于最低年龄、伪造完成度或缺照片 | 绕过表单直接 complete | 422/指定业务错误；不能进入发现或调用受保护业务 |
-| BE-10 | B03/B04 | 合格用户完成全部 onboarding | 保存后换设备登录 | 姓名/生日/城市/身份/意向/运动/照片/偏好正确恢复；年龄从生日计算 |
-| BE-11 | B04 | 身高/族裔显示开关关闭 | 他人从发现、动态作者、Profile、喜欢列表读取 | 所有公共 DTO 均不包含被隐藏值；本人仍可编辑 |
-| BE-12 | B04 | 两设备同时编辑同一 profile 版本 | 先后提交不同修改 | 按明确版本策略合并或返回冲突；不静默丢失数据 |
-| BE-13 | B04/B05 | 用户 A 拿到 B 的 media ID | 绑定、重排或删除 B 的媒体 | 拒绝；B 的对象与引用不变 |
-| BE-14 | B05 | 上传票据已过期，文件类型伪装/超限/损坏 | 上传并请求完成 | 拒绝或隔离；发现/动态不可见；错误可以恢复 |
-| BE-15 | B05 | 6 张合格照片 | 再上传/绑定第 7 张，或传 blob URL | 拒绝超限与非正式媒体；原有顺序/焦点不损坏 |
-| BE-16 | B05 | 合格图片含 EXIF GPS | 完成上传并展示 | 稳定 URL 跨设备可用；公共版本无精确定位元数据；缩略图正确 |
-| BE-17 | B05/B14 | 上传中断或帖子取消，产生孤立对象 | 清理任务重跑 | 仅清理无人引用且达到期限的对象；任务幂等且不误删共享引用 |
-| BE-18 | B06 | 合格与不合格候选混合 | 按距离/运动/意向偏好查询及翻页 | 不出现自己、封禁/删除/屏蔽、不合格年龄或半径外用户；游标无重复漏页 |
-| BE-19 | B06 | 半径内零人，半径外有人 | 请求发现 | 真实空状态；不偷偷扩大范围或插入假人物 |
-| BE-20 | B06 | A 单方面喜欢 C | 提交 Like | 保存单方决定；不创建 match/conversation，不弹真实匹配事件 |
-| BE-21 | B06 | A、B 同时互相 Like，网络重复提交 | 两个服务 worker 并发处理 | 恰好一个 match、一个 conversation、一次双方通知 |
-| BE-22 | B06 | 剩余一次 Like | 两个设备同时 Like 不同人 | 仅批准额度内请求；服务端重置时间一致，重新打开 app 不恢复额度 |
-| BE-23 | B06/B13 | 已取消匹配/有拉黑关系 | 再查询发现/匹配/动态/聊天及旧 URL | 按批准策略不可见/不可新写；付费和历史缓存都不能越权 |
-| BE-24 | B07 | A 不属于某 conversation | 猜测 ID、历史游标、发消息/读回执 | 拒绝；不泄漏消息、成员资料、未读或附件 |
-| BE-25 | B07 | 有效 conversation，客户端发送后丢 ACK | 同一 client message ID 重试 | 服务端只一条消息；返回相同 canonical ID；跨设备显示一次 |
-| BE-26 | B07 | 暂时离线，其他人继续发消息 | 重连并增量拉取 | 无消息丢失或重复；顺序稳定；未读游标不倒退 |
-| BE-27 | B07/B13 | 对方在发送过程中拉黑/被封禁 | 事务最终提交消息 | 权限重新检查；禁止的新写不落库、不推送 |
-| BE-28 | B08 | 免费且未匹配，伪造 isMatched/Plus 字段 | 直接 POST 邀约 | 403 PLUS_REQUIRED；零 invite/outbox 记录 |
-| BE-29 | B08 | 免费且真实匹配 | 从聊天或对方 Profile 发同一结构化邀约 | 保存同一规范记录；收件人可见；不会仅 toast 成功 |
-| BE-30 | B08/B11 | 有效 Plus 看到表单，提交前到期 | 提交未匹配邀约 | 服务端重新检查后拒绝；前端可重新显示会员入口 |
-| BE-31 | B08 | 有效 Plus 未匹配 | 发送合法邀约 | 仅 pending；不自行建立 match 或允许普通消息；只通知真实收件人 |
-| BE-32 | B08 | 同一待回应邀约/同一幂等键 | 重复、并发、换 payload 重试 | 相同请求同一结果；变更 payload 冲突；不同 key 也不能重复 pending |
-| BE-33 | B08 | 收件人收到 pending，另一个用户知道 invite ID | 接受/拒绝/改期 | 仅正确角色可操作；非法状态转换拒绝；版本冲突可恢复 |
-| BE-34 | B08 | 收件人接受与发送者取消/系统过期同时发生 | 多 worker 并发写 | 恰好一个合法最终状态；双方一致；无重复会话和通知 |
-| BE-35 | B08 | 邀约日期跨时区或 DST，过去时间/非法运动/空地点 | 创建或改期 | 存储明确时间 instant 与必要时区；无歧义；非法输入拒绝 |
-| BE-36 | B08/B13 | 连续向多人发邀约/被拒绝后重发 | 超过批准的额度或冷却 | 服务端限流；界面能解释何时恢复；Plus 不绕过防骚扰 |
-| BE-37 | B09 | A、B 有 connection，A、C 无 connection | 读 A 的动态/评论/媒体 URL | 仅允许的受众可取；C 不能通过直接 ID 读到；屏蔽即时生效 |
-| BE-38 | B09 | 发布携带 author_id/verified/created_at 伪造字段 | A 创建动态 | 作者/时间/认证全由服务器派生；不承认客户端伪造值 |
-| BE-39 | B09 | 反复点赞/取消、评论重试 | 并发 mutations | 一人至多一反应；计数一致不为负；同请求不重复评论 |
-| BE-40 | B09/B13 | 动态删除或审核撤下后有旧游标 | 翻页、评论、读取旧媒体 | 按政策拒绝；没有“删除后仍可互动”的残留 |
-| BE-41 | B10 | 免费/未认证 Plus/认证 Plus 三种主持人 | 创建活动并伪造 host/verified | 仅获准角色创建；主持人身份由 session 确定且计入人数一次 |
-| BE-42 | B10 | 活动剩最后 1 席 | 两台真实客户端、不同 worker 同时报名 | 只有 1 人成功；人数不超过 capacity；数据库唯一约束有效 |
-| BE-43 | B10 | 已参加用户重试加入/退出，主持人退出 | 重复发送并重启服务 | 加入/退出幂等；释放恰好一席；主持人按明确取消流程操作 |
-| BE-44 | B10/B15 | 主持人取消或改时间，成员已报名 | 提交变更与重试 | 一次版本变更；详情/Going 同步；每位相关成员仅收到一次通知 |
-| BE-45 | B11 | 原生返回 success，但无可信 Apple 验证 | 提交伪造/不合规格 JWS | 不授予 Plus；失败可重试；无客户端按钮/存储可以改权益 |
-| BE-46 | B11 | 签名有效但 bundle/environment/product/accountToken 不匹配 | 恢复/同步购买 | 拒绝绑定；原购买账号权限不被转移 |
-| BE-47 | B11 | Apple 已扣款，服务端处理后 ACK 丢失/worker 重启 | 再次同步或恢复 | 同交易仅一次绑定和交付；显示现有权益，不能要求重复付款 |
-| BE-48 | B11 | 订阅取消续费但未到期、grace、到期、退款 | 查询会员并执行受保护 mutation | 分别保留至有效期/验证 grace deadline/拒绝/撤销；以服务端时间判断 |
-| BE-49 | B11 | 重复/乱序 webhook、旧购买在新退款后重放 | 验证并处理 | notification UUID 去重；旧状态不复活权益；撤销旧链不误伤另一有效链 |
-| BE-50 | B11 | webhook 接收时 DB/队列不可用或 Apple API 超时 | 接收、重试、定时对账 | 未持久接受不得确认成功；安全重试；权益不凭未验证数据扩大；告警可见 |
-| BE-51 | B11/B02 | 购买处理中退出并切换 PACE 账号 | 原生延迟回调/恢复 | 交易仍绑定原账号；新账号不能获得旧账号 Plus |
-| BE-52 | B12 | 客户端提交 verified:true 或伪造验证回调 | 保存资料/完成验证 | 不授予徽章；仅有效供应商结果可更新；重复回调不多次写 |
-| BE-53 | B12/B13 | 认证失败、审核封禁、本人删除 | 再请求主持/发现/私密资源 | 权限按可信状态变化；验证材料按明确保留策略清理 |
-| BE-54 | B13 | 有效举报包含相关消息/动态 | 提交后管理员处理 | 有追踪 ID、最少必要证据、访问控制和操作审计；举报者对被举报者匿名 |
-| BE-55 | B14 | 登录用户确认删除 | 删除请求提交后访问旧 session、发现、消息、营销队列 | 立即停用与撤销；不再被发现/营销；后台清理按时完成且可重试 |
-| BE-56 | B14 | 用户请求数据导出 | 生成并下载导出包 | 仅本人信息；有认证/短期下载/审计；不泄漏他人私密资料 |
-| BE-57 | B14 | 未 opt-in、撤回、订阅取消或删号 | 已排队营销任务执行 | 最终投递前再检查并拒发；必要事务通知与营销分开 |
-| BE-58 | B15 | 同一手机换账号，旧 token 已注销 | 原账号收到聊天/邀约事件 | 不向新账号会话泄漏内容；无效 token 清理；点击仅进入有权资源 |
-| BE-59 | B16 | 用户未授权/已撤销运动来源 | 后台同步或展示数据来源 | 不伪称已连接；不继续获取；保留/删除按已确认政策执行 |
-| BE-60 | B17 | 同时有业务请求、队列任务与数据库故障 | 注入超时、恢复/回滚/备份恢复 | 无静默丢消息/交易；重试幂等；告警、关联 request ID、恢复演练证据齐全 |
-| BE-61 | B17 | 日志/错误上报与分析埋点开启 | 认证失败、支付错误、聊天异常 | 密码/token/JWS/完整私聊/精确位置不进入通用日志和第三方分析 |
-| BE-62 | B17/B18 | 批准的目标并发和数据量 | 运行负载、弱网、冷启动、连续分页 | 达到事先批准的 p95/SLO、错误率和资源预算；不卡死、不无限 spinner、不重复提交 |
+| BE-01 | B01/B02 | No session or a forged actorId | Read the user's profile/messages/membership, or perform any mutation | 401; zero persistent writes; the response does not disclose whether the target exists |
+| BE-02 | B02 | An existing email address or a new OAuth provider identity | Register or link an account | Follow the approved linking policy; matching email strings alone do not merge accounts without verification |
+| BE-03 | B02 | Valid registration details and a verification flow | Complete registration and restart the client/server | The same persistent user ID can be restored; passwords are neither stored in plaintext nor logged |
+| BE-04 | B02 | Invalid Google/Apple tokens, an incorrect audience/nonce, or an expired token | Attempt provider sign-in | Reject the attempt; do not create a verified account; replay cannot bypass validation |
+| BE-05 | B02 | An expired or previously used verification/password-reset link | Redeem it again | Reject without changing the account; after a valid reset, revoke old sessions according to policy |
+| BE-06 | B02 | A valid long-lived session nearing expiry | Cold-start, renew, and restore concurrently | Do not repeatedly ask for sign-in; rotate safely; return to sign-in for an actually invalid session, and allow retry for network errors |
+| BE-07 | B02 | Two signed-in devices | Sign out the current device or revoke all devices | Sessions within the requested scope become invalid immediately; old credentials cannot send messages/invitations |
+| BE-08 | B02/B17 | Rapid failed sign-ins from the same identity/IP | Exceed the approved threshold | Consistent 429/Retry-After; no email-existence disclosure; legitimate users have a recovery path |
+| BE-09 | B03 | A user below the minimum age, forged completion status, or missing photos | Bypass the form and call complete directly | 422 or the specified business error; no access to discovery or protected operations |
+| BE-10 | B03/B04 | An eligible user completes all onboarding steps | Save, then sign in on a different device | Name/date of birth/city/identity/intent/sports/photos/preferences restore correctly; calculate age from date of birth |
+| BE-11 | B04 | Height/ethnicity visibility toggles are off | Another user reads through discovery, a Moments author, Profile, or the likes list | Every public DTO omits hidden values; the owner can still edit them |
+| BE-12 | B04 | Two devices edit the same profile version | Submit different changes in sequence | Merge according to an explicit version policy or return a conflict; no silent data loss |
+| BE-13 | B04/B05 | User A obtains B's media ID | Bind, reorder, or delete B's media | Reject; B's object and references remain unchanged |
+| BE-14 | B05 | An expired upload grant, disguised file type, oversized file, or corrupt file | Upload and request completion | Reject or quarantine; keep it out of discovery/Moments; errors are recoverable |
+| BE-15 | B05 | 6 eligible photos | Upload/bind a 7th photo or supply a blob URL | Reject excess photos and non-production media references; preserve existing ordering/focal points |
+| BE-16 | B05 | An eligible image contains EXIF GPS data | Complete the upload and display it | Stable URLs work across devices; public versions contain no precise location metadata; thumbnails are correct |
+| BE-17 | B05/B14 | An interrupted upload or cancelled post creates orphaned objects | Rerun cleanup jobs | Delete only unreferenced objects whose retention period has elapsed; the job is idempotent and preserves shared references |
+| BE-18 | B06 | A mix of eligible and ineligible candidates | Query and paginate by distance/sport/intent preferences | Exclude the requesting user, banned/deleted/blocked users, ineligible ages, and users outside the radius; cursors cause no duplicate or skipped pages |
+| BE-19 | B06 | No people inside the radius, but people outside it | Request discovery | Return an honest empty state; do not silently expand the range or insert fake profiles |
+| BE-20 | B06 | A likes C without a reciprocal Like | Submit the Like | Save the one-sided decision; create no match/conversation and emit no real match event |
+| BE-21 | B06 | A and B Like each other simultaneously, with network retries | Two service workers handle the requests concurrently | Exactly one match, one conversation, and one notification to each party |
+| BE-22 | B06 | One Like remains in the quota | Two devices Like different people simultaneously | Approve only requests within the quota; server reset times are consistent; reopening the app does not restore the quota |
+| BE-23 | B06/B13 | A match has ended or a block exists | Query discovery/matches/Moments/chat or revisit old URLs | Visibility/new writes follow the approved restrictions; payment and cached history cannot bypass authorization |
+| BE-24 | B07 | A is not a member of a conversation | Guess its ID or history cursor, send a message, or submit a read receipt | Reject; disclose no messages, member details, unread state, or attachments |
+| BE-25 | B07 | A valid conversation, but the client loses the ACK after sending | Retry with the same client message ID | The server stores one message, returns the same canonical ID, and displays it once across devices |
+| BE-26 | B07 | A temporary offline period while others continue sending messages | Reconnect and fetch incremental updates | No lost or duplicate messages; stable ordering; unread cursors never move backward |
+| BE-27 | B07/B13 | The other user blocks the sender or is banned during sending | Reach the final message transaction commit | Recheck permissions; prohibited new writes are neither persisted nor pushed |
+| BE-28 | B08 | A free, unmatched user forges isMatched/Plus fields | POST an invitation directly | 403 PLUS_REQUIRED; zero invite/outbox records |
+| BE-29 | B08 | A free user with a real match | Send the same structured invitation from Chat or the other person's Profile | Save the same canonical record; it is visible to the recipient; success is not merely a toast |
+| BE-30 | B08/B11 | Active Plus when the form opens, but expired before submission | Submit an invitation before matching | The server rechecks and rejects; the frontend can show the membership entry again |
+| BE-31 | B08 | Active Plus and no match | Send a valid invitation | Create only pending state; do not automatically create a match or allow ordinary messages; notify only the actual recipient |
+| BE-32 | B08 | The same pending invitation or idempotency key | Retry repeatedly, concurrently, or with a changed payload | Identical requests return the same result; a changed payload conflicts; even different keys cannot create duplicate pending invitations |
+| BE-33 | B08 | The recipient has a pending invitation, and another user knows its ID | Accept, decline, or reschedule | Only the proper role can act; reject illegal transitions; version conflicts are recoverable |
+| BE-34 | B08 | Recipient acceptance races with sender cancellation or system expiry | Multiple workers write concurrently | Exactly one legal final state; both parties see the same result; no duplicate conversations or notifications |
+| BE-35 | B08 | Invitation dates span time zones or DST, or input has a past time, invalid sport, or empty location | Create or reschedule | Store an unambiguous time instant and the required time zone; reject invalid input |
+| BE-36 | B08/B13 | Repeated invitations to multiple people or resending after a decline | Exceed the approved quota or cooldown | Enforce limits server-side; the UI can explain when access resumes; Plus does not bypass anti-harassment controls |
+| BE-37 | B09 | A and B are connected; A and C are not | Read A's posts/comments/media URLs | Only permitted audiences have access; C cannot read through direct IDs; blocking takes effect immediately |
+| BE-38 | B09 | A publish request contains forged author_id/verified/created_at fields | A creates a post | The server derives author/time/verification; forged client values are not accepted |
+| BE-39 | B09 | Repeated reactions/unreactions or comment retries | Perform concurrent mutations | At most one reaction per person; consistent, nonnegative counts; the same request does not duplicate a comment |
+| BE-40 | B09/B13 | A post has been deleted or removed by moderation, but an old cursor remains | Paginate, comment, or read old media | Reject according to policy; no residual interactions remain available after deletion |
+| BE-41 | B10 | Three host types: free, unverified Plus, and verified Plus | Create activities and forge host/verified fields | Only approved roles can create; derive the host from the session and count that person exactly once |
+| BE-42 | B10 | One place remains in an activity | Two real clients sign up simultaneously through different workers | Only one succeeds; attendance never exceeds capacity; database uniqueness constraints hold |
+| BE-43 | B10 | An attendee retries joining/leaving, or a host attempts to leave | Repeat requests and restart the service | Joining/leaving is idempotent; release exactly one place; hosts follow the defined cancellation flow |
+| BE-44 | B10/B15 | A host cancels or changes the time after members have joined | Submit the change and retry | One version change; details and Going stay synchronized; each affected member receives one notification |
+| BE-45 | B11 | Native returns success without trusted Apple verification | Submit forged or malformed JWS | Do not grant Plus; failures are retryable; no client button/storage value can change entitlements |
+| BE-46 | B11 | A valid signature but mismatched bundle/environment/product/accountToken | Restore or sync a purchase | Reject binding; do not transfer the original purchaser's entitlements |
+| BE-47 | B11 | Apple has charged, but the ACK is lost after server processing or a worker restarts | Sync again or restore | Bind and fulfill the transaction once; show existing entitlements without requiring another payment |
+| BE-48 | B11 | Renewal cancelled before expiry, grace, expiry, or refund | Query membership and execute a protected mutation | Respectively retain access until validity ends, validate the grace deadline, deny access, or revoke access; use server time |
+| BE-49 | B11 | Duplicate/out-of-order webhooks or replay of an old purchase after a newer refund | Verify and process | Deduplicate by notification UUID; stale state cannot revive entitlements; revoking an old chain does not harm another valid chain |
+| BE-50 | B11 | Database/queue unavailable when a webhook arrives, or an Apple API timeout | Receive, retry, and reconcile on schedule | Do not acknowledge success before durable acceptance; retry safely; unverified data cannot expand entitlements; alerts are visible |
+| BE-51 | B11/B02 | Sign-out and a PACE account switch during a purchase | Receive a delayed native callback or restore | Keep the transaction bound to the original account; the new account cannot receive the old account's Plus |
+| BE-52 | B12 | The client submits verified:true or a forged verification callback | Save a profile or complete verification | Grant no badge; only valid provider results can update status; repeated callbacks do not produce repeated writes |
+| BE-53 | B12/B13 | Failed verification, a moderation ban, or account deletion | Request host/discovery/private-resource access again | Permissions follow trusted state changes; verification material is cleaned up under an explicit retention policy |
+| BE-54 | B13 | A valid report includes relevant messages/posts | Submit it and have an administrator process it | Provide a tracking ID, minimum necessary evidence, access control, and an action audit trail; the reporter remains anonymous to the reported user |
+| BE-55 | B14 | A signed-in user confirms deletion | After submitting deletion, access old sessions/discovery/messages/marketing queues | Immediately deactivate and revoke; stop discovery and marketing; background cleanup finishes on time and is retryable |
+| BE-56 | B14 | A user requests a data export | Generate and download the export | Include only that user's information; require authentication, short-lived download access, and auditing; do not leak others' private details |
+| BE-57 | B14 | No opt-in, consent withdrawal, subscription cancellation, or account deletion | Run already queued marketing jobs | Recheck before final delivery and suppress sending; separate necessary transactional notifications from marketing |
+| BE-58 | B15 | An account switch on the same phone, with the old token unregistered | The original account receives a chat/invitation event | Do not leak content into the new account's session; clean up invalid tokens; taps open only authorized resources |
+| BE-59 | B16 | An activity source is unauthorized or its authorization has been revoked | Sync in the background or display the data source | Do not falsely show connected status or continue fetching; follow the confirmed retention/deletion policy |
+| BE-60 | B17 | Concurrent business requests, queue jobs, and a database failure | Inject timeouts and exercise recovery/rollback/backup restoration | No silent loss of messages/transactions; idempotent retries; complete alerts, correlated request IDs, and restoration-drill evidence |
+| BE-61 | B17 | Logging/error reporting and analytics are enabled | Trigger authentication failures, payment errors, or chat failures | Passwords/tokens/JWS/full private conversations/precise locations never enter general logs or third-party analytics |
+| BE-62 | B17/B18 | Approved target concurrency and data volume | Run load, poor-network, cold-start, and continuous-pagination tests | Meet the preapproved p95/SLO, error-rate, and resource budgets; no freezes, endless spinners, or duplicate submissions |
 
-测试必须额外覆盖：对各 mutation 的未知字段/长度/Unicode/SQL 与脚本输入；各 ID 资源的横向越权；明确 401/403/404/409/422/429/503；成功写入后真实重启仍可恢复。输入限制由 schema 统一，不直接沿用可能不一致的 UI maxlength。
+Tests must additionally cover unknown fields, length limits, Unicode, SQL input, and script input for every mutation; horizontal privilege escalation across each ID-addressed resource; explicit 401/403/404/409/422/429/503 behavior; and recovery after a real restart following a successful write. Define input limits centrally in schemas rather than copying potentially inconsistent UI maxlength values.
 
-现有可复用测试包括 `engagement_test_cases.mjs` 的 Plus/屏蔽/幂等/容量/Apple 状态规则、`repository_test_cases.mjs` 的 session/HTTP 适配、`storekit_bridge_test_cases.mjs` 的原生桥结果校验。应把相同规则迁移至真实 HTTP 与数据库测试；不要以这些内存测试代替 BE-21/34/42 的多进程竞态测试。
+Reusable tests already include Plus/block/idempotency/capacity/Apple state rules in `engagement_test_cases.mjs`, session/HTTP adapters in `repository_test_cases.mjs`, and native bridge result validation in `storekit_bridge_test_cases.mjs`. Carry the same rules into real HTTP/database tests; these in-memory tests do not replace the multi-process race tests in BE-21/34/42.
 
-## 需要用户决定的产品问题
+## Product decisions required from the user
 
-以下为真正影响数据权限、业务状态或成本的选择，不能由视觉原型推断。采访时将已具备前提的独立选择放在同一轮；依赖尚未回答选择的问题留到下一轮，不要求用户选择数据库等常规实现细节。2026-10-04 交接时首发平台、地区语言、功能范围仍待回复，见根目录 PROJECT_HANDOFF.txt。
+The choices below materially affect data access, business state, or cost and cannot be inferred from the visual prototype. During the interview, group independent choices whose prerequisites are known into the same round; defer questions that depend on unanswered choices until the next round. Do not ask the user to select routine implementation details such as a database. At the 2026-10-04 handoff, launch platform, region/languages, and feature scope still awaited answers; see PROJECT_HANDOFF.txt in the repository root.
 
-1. **首发范围**：仅 iPhone App Store，还是同时 Web/Android？首发国家/城市？这影响真实登录、支付、推送、年龄/隐私审核与地理数据范围。
-2. **未匹配邀约被接受后**：建立正式 match 并允许聊天，还是仅允许围绕这次活动的会话，或仍需双方 Like？现参考代码只定义 pending，尚未定义接受行为。
-3. **谁可以被发现/聊天/主持**：自拍验证是否注册后必经（旧产品规格）？是否仅主持活动必需（当前参考代码）？未通过者能使用哪些功能？
-4. **发现条件与额度**：性别/交友意向/年龄区间怎样互相匹配？免费每日 Like 数、Plus 陌生邀约数及拒绝冷却？当前“12 likes”只是本地起始数字，不能视为已批准收费政策。
-5. **首发保留哪些扩展功能**：公开活动、动态、真实 Garmin/Strava/Apple Health 三者全部首发，还是先保证认识→匹配→聊天→邀约闭环？未选入的入口需明确隐藏/不可用。
-6. **付费商业参数**：Plus 月/年周期、价格、国家、试用、Family Sharing、退款支持账号迁移策略；现代码没有真实产品 ID 或价格。可以延后到 B11 开工前确认。
-7. **运营与隐私政策**：举报由谁接收、处理时限、封禁申诉；删号后哪些交易/滥用证据需保留、多久；营销默认关闭与取消订阅即停止营销是否继续遵循旧规格。具体合规要求应在目标地区确认后核查。
+1. **Launch scope**: iPhone App Store only, or Web/Android as well? Which launch countries/cities? This affects real sign-in, payments, push notifications, age/privacy review, and geographic data scope.
+2. **After acceptance of an invitation before matching**: create a formal match and allow chat, permit only a conversation around that activity, or still require mutual Likes? The current reference code defines only pending state, not acceptance behavior.
+3. **Who can be discovered, chat, or host**: is selfie verification mandatory after registration (the older product specification), or required only for hosting activities (the current reference code)? Which features can unverified users access?
+4. **Discovery criteria and quotas**: how should gender, connection intent, and age preferences match reciprocally? What are the free daily Like quota, Plus invitations-to-unmatched-users quota, and cooldown after rejection? The current “12 likes” is only a local starting value, not an approved monetization policy.
+5. **Which extensions remain in the first release**: launch public activities, Moments, and real Garmin/Strava/Apple Health integrations together, or first complete discovery→matching→chat→invitations? Entry points excluded from launch must be explicitly hidden or unavailable.
+6. **Subscription commercial parameters**: Plus monthly/yearly periods, prices, countries, trials, Family Sharing, refund support, and account-migration policy. The code has no real product IDs or prices. These choices can wait until work on B11 is due to begin.
+7. **Operations and privacy policy**: who receives reports, response time targets, and ban appeals; which transaction/abuse evidence must remain after deletion, and for how long; whether to continue following the older specification's marketing-off-by-default and stop-marketing-on-subscription-cancellation rules. Check specific compliance requirements after confirming the target region.
 
-已有明确方向保留：距离筛选免费、未匹配直邀为 Plus、匹配内邀约免费、公开活动参与免费、创建需 Plus 与可信认证、真实双向 Like 才能叫 match、不凭空填充远距离人选。若第 2 项选择“接受邀约建立 match”，应把它记录为明确的新关系来源，不能悄悄沿用 mutual_like。
+Preserve the established direction: distance filters are free; direct invitations before matching require Plus; invitations within matches are free; public activity participation is free; creation requires Plus and trusted verification; a match requires actual mutual Likes; and distant candidates must not be fabricated to fill results. If item 2 is resolved as “accepting an invitation creates a match,” record it as an explicit new relationship source rather than silently reusing mutual_like.
 
-旧文档存在需归一的约束差异：`PRODUCT_SPEC.md` 写简介无最少长度、运动不限制数量，当前 onboarding 要求简介至少 12 字符且最多 5 项运动；旧规格说自拍必经而实现可进入主页。只因代码目前这样，不代表这些策略已获最终认可。
+Some older constraints need reconciliation: `PRODUCT_SPEC.md` specifies no minimum bio length and no limit on the number of sports, while current onboarding requires at least 12 bio characters and allows at most 5 sports. The older specification makes selfie verification mandatory, while the implementation allows entry to the home screen. Existing code behavior does not mean these policies have final approval.
 
-## 开发顺序与停止点
+## Development sequence and authorization gates
 
-1. 本轮只交付前端修改、前端测试/全盘检查报告、此后端清单与测试规格。
-2. 用户审阅并回答影响第一阶段的问题。将决定写入可追踪规格，明确首发范围。
-3. **收到用户明确后端实施命令后**，先落地 schema/测试环境与 BE-01…相关失败测试，再实现 B01–B05。
-4. B06–B08 完成真实多人主闭环，再 B09–B10、B11–B16；安全、隐私、可观测性随模块接入，不在上线最后一天补。
-5. B17–B18 出具 staging、多设备、Apple sandbox、故障/恢复、性能及运营验收证据。只有真实测试达到批准标准后，才能声称可以上线；本审计不作这种声明。
+1. This phase delivers only frontend changes, frontend tests/full-app audit findings, this backend backlog, and test specifications.
+2. The user reviews the material and answers questions affecting the first phase. Record decisions in traceable specifications and define launch scope.
+3. **After receiving an explicit backend implementation instruction from the user**, establish schemas, the test environment, and relevant failing tests starting with BE-01, then implement B01–B05.
+4. Complete the real multi-user core flow in B06–B08, then B09–B10 and B11–B16. Integrate safety, privacy, and observability with each module rather than adding them on the last day before launch.
+5. B17–B18 must produce staging, multi-device, Apple Sandbox, failure/recovery, performance, and operational acceptance evidence. Claim launch readiness only after real tests meet the approved standards; this audit makes no such claim.

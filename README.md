@@ -2,7 +2,7 @@
 
 PACE is a mobile-first browser prototype for meeting people through a shared active lifestyle. The runtime uses plain HTML, CSS, and native JavaScript modules; Playwright is the only development dependency.
 
-**New collaborators and Codex agents: start with [PROJECT_HANDOFF.txt](./PROJECT_HANDOFF.txt).** It contains the Chinese handoff covering product decisions, current design, prototype limitations, architecture, security, tests, and collaboration rules. [AGENTS.md](./AGENTS.md) routes agents to the relevant files. Backend implementation remains gated on Kevin reviewing the backlog/test cases and explicitly authorizing it; this repository handoff does not start that work.
+**New collaborators and Codex agents: start with [PROJECT_HANDOFF.txt](./PROJECT_HANDOFF.txt).** It contains the English handoff covering product decisions, current design, prototype limitations, architecture, security, tests, and collaboration rules. [AGENTS.md](./AGENTS.md) routes agents to the relevant files. Backend implementation remains gated on Kevin reviewing the backlog/test cases and explicitly authorizing it; this repository handoff does not start that work.
 
 Read [PRODUCT_SPEC.md](./PRODUCT_SPEC.md) alongside the handoff: some early visual descriptions and onboarding constraints differ from later decisions. Current audit deliverables are the [18-module backend backlog and 62 acceptance cases](./docs/BACKEND_AUDIT_DRAFT_2026-09-26.md) and [68 frontend test scenarios](./docs/FRONTEND_TEST_PLAN_2026-09-26.md). These are test specifications, not a claim that production integration has passed.
 
