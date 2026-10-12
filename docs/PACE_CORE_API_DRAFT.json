@@ -1,0 +1,4055 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PACE free-core API — review draft",
+    "version": "0.1.0-draft",
+    "description": "Contract design only, 2026-10-11. No service exists. iOS+Android; age 18+ and trusted selfie verification before visibility/Like/chat. Proposed session and technical limits need review. Deferred billing/feed/activities/invitations omitted. Companion PACE_BACKEND_DESIGN.md defines transactions, eligibility and open decisions."
+  },
+  "servers": [
+    {
+      "url": "/api/v1",
+      "description": "Relative contract base; not a deployed endpoint."
+    }
+  ],
+  "security": [
+    {
+      "cookieSession": []
+    },
+    {
+      "bearerSession": []
+    }
+  ],
+  "paths": {
+    "/sports": {
+      "get": {
+        "operationId": "listSports",
+        "summary": "Read stable sport catalog",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sports"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": []
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "operationId": "register",
+        "summary": "Request email signup and verification",
+        "description": "Generic account-existence-safe response. Does not unlock discovery. Password/linking policy pending.\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "202": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Accepted"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Signup"
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/email/verify": {
+      "post": {
+        "operationId": "verifyEmail",
+        "summary": "Redeem a single-use email verification token",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Accepted"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenInput"
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/email/resend": {
+      "post": {
+        "operationId": "resendEmail",
+        "summary": "Request verification mail",
+        "description": "Generic response and rate limiting; do not disclose email ownership.\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "202": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Accepted"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailInput"
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/password/reset/request": {
+      "post": {
+        "operationId": "requestPasswordReset",
+        "summary": "Request reset mail",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "202": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Accepted"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailInput"
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/password/reset/complete": {
+      "post": {
+        "operationId": "completePasswordReset",
+        "summary": "Consume token and replace password",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Accepted"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPassword"
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "loginWeb",
+        "summary": "Login with a web session cookie",
+        "description": "Existing path preserved. Set secure HttpOnly cookie. No native refresh credential in response.\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Authenticated"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Credentials"
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/oauth/challenge": {
+      "post": {
+        "operationId": "createOAuthChallenge",
+        "summary": "Create server-bound single-use provider nonce challenge",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthChallenge"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OAuthChallengeInput"
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/oauth/exchange": {
+      "post": {
+        "operationId": "exchangeOAuthWeb",
+        "summary": "Verify provider credential and create web session",
+        "description": "Verify signature, audience, issuer, expiry, nonce and challenge client type; no email-string-only account merging.\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Authenticated"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OAuthInput"
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/native/login": {
+      "post": {
+        "operationId": "loginNative",
+        "summary": "Login for iOS/Android secure credential storage",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NativeCredentials"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Credentials"
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/native/oauth/exchange": {
+      "post": {
+        "operationId": "exchangeOAuthNative",
+        "summary": "Exchange provider credential for native session",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NativeCredentials"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OAuthInput"
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/native/refresh": {
+      "post": {
+        "operationId": "refreshNative",
+        "summary": "Rotate native refresh credential",
+        "description": "Body credential authenticates this operation. Rotation/reuse detection and concurrent-refresh policy must be finalized.\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NativeCredentials"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NativeRefresh"
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "operationId": "refreshWeb",
+        "summary": "Renew web cookie session",
+        "description": "Authenticate renewable server session cookie; enforce CSRF. No bearer/refresh JSON input.\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Authenticated"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [],
+        "security": [
+          {
+            "cookieSession": []
+          }
+        ]
+      }
+    },
+    "/auth/session": {
+      "get": {
+        "operationId": "getSession",
+        "summary": "Verify current session",
+        "description": "Preserve authenticated:true exactly. Onboarding/verification status does not itself unlock UI; GET /me/profile loads canonical state.\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionInfo"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "operationId": "logout",
+        "summary": "Revoke current server session",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "204": {
+            "description": "Completed; no body."
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/auth/logout-all": {
+      "post": {
+        "operationId": "logoutAll",
+        "summary": "Revoke all account sessions",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "204": {
+            "description": "Completed; no body."
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/me/profile": {
+      "get": {
+        "operationId": "getOwnProfile",
+        "summary": "Read private profile and onboarding state",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrivateProfile"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": []
+      },
+      "patch": {
+        "operationId": "patchOwnProfile",
+        "summary": "Update allowlisted fields with version check",
+        "description": "version is required; stale updates return 409. DOB becomes protected after verified completion; correction requires approved support flow. No verified/author/actor input.\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrivateProfile"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfilePatch"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/preferences": {
+      "get": {
+        "operationId": "getPreferences",
+        "summary": "Read own discovery preferences",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Preferences"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": []
+      },
+      "put": {
+        "operationId": "putPreferences",
+        "summary": "Update preferences with version check",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Preferences"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Preferences"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/policy-acceptance": {
+      "put": {
+        "operationId": "acceptPolicies",
+        "summary": "Record current accepted policy versions",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Accepted"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/onboarding/complete": {
+      "post": {
+        "operationId": "completeOnboarding",
+        "summary": "Complete saved onboarding after authoritative checks",
+        "description": "Existing body-free path preserved. Require adult DOB, approved required fields, ready owned photo, email and selfie verification. Pending profile rules need review.\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Authenticated"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/profiles/{user_id}": {
+      "get": {
+        "operationId": "getPublicProfile",
+        "summary": "Read profile in authorized discovery/match context",
+        "description": "Unknown/inaccessible IDs have identical 404 shape; omit hidden fields instead of null placeholders.\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicProfile"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Opaque canonical server ID."
+            }
+          }
+        ]
+      }
+    },
+    "/me/media-uploads": {
+      "post": {
+        "operationId": "createMediaUpload",
+        "summary": "Create owned expiring profile-photo upload grant",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "201": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadGrant"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/media/{media_id}/complete": {
+      "post": {
+        "operationId": "completeMediaUpload",
+        "summary": "Validate uploaded object and queue processing",
+        "description": "Ownership, expiry, actual bytes, count, MIME/decoding and metadata checks. Completion does not declare processing successful.\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "202": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Media"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "media_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Opaque canonical server ID."
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ]
+      }
+    },
+    "/me/media/{media_id}": {
+      "get": {
+        "operationId": "getOwnMedia",
+        "summary": "Read owned processing state",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Media"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "media_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Opaque canonical server ID."
+            }
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "deleteOwnMedia",
+        "summary": "Remove owned eligible media reference safely",
+        "description": "Deletion policy must preserve profile eligibility or restrict visibility; references and cleanup are transactional.\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "204": {
+            "description": "Completed; no body."
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "media_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Opaque canonical server ID."
+            }
+          }
+        ]
+      }
+    },
+    "/me/verification/sessions": {
+      "post": {
+        "operationId": "startVerification",
+        "summary": "Start trusted selfie provider session",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "201": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationStart"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ]
+      }
+    },
+    "/me/verification": {
+      "get": {
+        "operationId": "getVerification",
+        "summary": "Read authoritative selfie state",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Verification"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/discover": {
+      "get": {
+        "operationId": "discover",
+        "summary": "Read eligible candidates inside requested filters",
+        "description": "Both caller and candidates must be eligible verified adults. Never expand radius automatically. Filter-scoped signed cursor; recheck visibility each page. Source/precision of private location pending.\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Discovery"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "distance_km",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          },
+          {
+            "name": "sport_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "goal",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "schedule",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/discover/decisions": {
+      "post": {
+        "operationId": "createDiscoveryDecision",
+        "summary": "Record Like/Pass and create match only for reciprocal Likes",
+        "description": "Lock canonical pair, quota bucket and current eligibility; unique match/conversation/outbox commit. quota values are nullable until approved policy exists; service implementation must finalize policy.\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DecisionResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/matches": {
+      "get": {
+        "operationId": "listMatches",
+        "summary": "List active genuine matches",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Matches"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      }
+    },
+    "/matches/{match_id}": {
+      "delete": {
+        "operationId": "unmatch",
+        "summary": "End own match and prevent new chat writes",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "204": {
+            "description": "Completed; no body."
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "match_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Opaque canonical server ID."
+            }
+          }
+        ]
+      }
+    },
+    "/me/conversations": {
+      "get": {
+        "operationId": "listConversations",
+        "summary": "List authorized active conversations",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Conversations"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ]
+      }
+    },
+    "/conversations/{conversation_id}/messages": {
+      "get": {
+        "operationId": "listMessages",
+        "summary": "Read authorized message history or incremental catch-up",
+        "description": "History newest page, older cursor; after_sequence catch-up ascending. Do not combine cursor and after_sequence. Continued catch-up cursor retains mode and boundary. Historical access after unmatch/block awaits policy.\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Messages"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Opaque canonical server ID."
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "after_sequence",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        ]
+      },
+      "post": {
+        "operationId": "sendMessage",
+        "summary": "Persist a member message independently of live transport",
+        "description": "client_message_id is mandatory dedupe key; same key/different text conflicts. Repeat result remains permission-gated. Commit sequence/message/outbox atomically.\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "201": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Opaque canonical server ID."
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MessageInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/conversations/{conversation_id}/read": {
+      "put": {
+        "operationId": "markRead",
+        "summary": "Advance monotonic read cursor",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadState"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Opaque canonical server ID."
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReadInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/blocks": {
+      "post": {
+        "operationId": "blockUser",
+        "summary": "Block a user and revoke pair access",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Accepted"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BlockInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/blocks/{user_id}": {
+      "delete": {
+        "operationId": "unblockUser",
+        "summary": "Remove own directional block without restoring an ended match",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "204": {
+            "description": "Completed; no body."
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Opaque canonical server ID."
+            }
+          }
+        ]
+      }
+    },
+    "/reports": {
+      "post": {
+        "operationId": "report",
+        "summary": "Submit authorized user/message report",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "201": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Report"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/devices": {
+      "put": {
+        "operationId": "bindDevice",
+        "summary": "Bind push token to current account/session",
+        "description": "Atomically invalidate previous owner binding. Never trust a client-supplied account ID.\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/devices/{device_id}": {
+      "delete": {
+        "operationId": "unbindDevice",
+        "summary": "Unregister owned device token",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "204": {
+            "description": "Completed; no body."
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Opaque canonical server ID."
+            }
+          }
+        ]
+      }
+    },
+    "/me/consents": {
+      "put": {
+        "operationId": "setConsent",
+        "summary": "Grant or withdraw marketing consent",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "200": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Consent"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsentInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/data-exports": {
+      "post": {
+        "operationId": "requestDataExport",
+        "summary": "Queue own data export",
+        "description": "\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "202": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Job"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ]
+      }
+    },
+    "/me/deletion": {
+      "post": {
+        "operationId": "deleteAccount",
+        "summary": "Immediately deactivate and revoke sessions; queue cleanup",
+        "description": "Explicit confirmation and recent authentication required; recent-auth challenge design pending. Ordinary sessions become invalid. Restricted job status/download authorization will be designed separately.\nDraft: inputs reject unknown fields. Resource authorization and current eligibility are rechecked, including retries. Private responses use Cache-Control: no-store. Cookie mutations require CSRF protection.",
+        "responses": {
+          "202": {
+            "description": "Successful result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Job"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteInput"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "fieldErrors": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "requestId": {
+                "type": "string"
+              },
+              "retryable": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "code",
+              "message",
+              "fieldErrors",
+              "requestId",
+              "retryable"
+            ]
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "Authenticated": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "authenticated": {
+            "type": "boolean",
+            "const": true
+          }
+        },
+        "required": [
+          "authenticated"
+        ]
+      },
+      "Accepted": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "accepted": {
+            "type": "boolean",
+            "const": true
+          }
+        },
+        "required": [
+          "accepted"
+        ]
+      },
+      "Credentials": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "Signup": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "terms_version": {
+            "type": "string"
+          },
+          "privacy_version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "password",
+          "terms_version",
+          "privacy_version"
+        ]
+      },
+      "TokenInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "token": {
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": [
+          "token"
+        ]
+      },
+      "EmailInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "ResetPassword": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "token": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "password": {
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": [
+          "token",
+          "password"
+        ]
+      },
+      "OAuthInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "provider": {
+            "type": "string",
+            "enum": [
+              "apple",
+              "google"
+            ]
+          },
+          "credential": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "challenge_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          }
+        },
+        "required": [
+          "provider",
+          "credential",
+          "challenge_id"
+        ]
+      },
+      "OAuthChallengeInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "provider": {
+            "type": "string",
+            "enum": [
+              "apple",
+              "google"
+            ]
+          },
+          "client_type": {
+            "type": "string",
+            "enum": [
+              "web",
+              "ios",
+              "android"
+            ]
+          }
+        },
+        "required": [
+          "provider",
+          "client_type"
+        ]
+      },
+      "OAuthChallenge": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "challenge_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          },
+          "nonce": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "challenge_id",
+          "nonce",
+          "expires_at"
+        ]
+      },
+      "NativeCredentials": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "description": "Sensitive response credential. Never log/cache; native secure handling only."
+          },
+          "refresh_token": {
+            "type": "string",
+            "description": "Sensitive response credential. Native OS secure storage only."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "token_type": {
+            "type": "string",
+            "const": "Bearer"
+          }
+        },
+        "required": [
+          "access_token",
+          "refresh_token",
+          "expires_at",
+          "token_type"
+        ]
+      },
+      "NativeRefresh": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "refresh_token": {
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": [
+          "refresh_token"
+        ]
+      },
+      "SessionInfo": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "authenticated": {
+            "type": "boolean",
+            "const": true
+          },
+          "user_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          },
+          "onboarding_complete": {
+            "type": "boolean"
+          },
+          "verification_state": {
+            "type": "string",
+            "enum": [
+              "none",
+              "pending",
+              "verified",
+              "rejected",
+              "expired"
+            ]
+          }
+        },
+        "required": [
+          "authenticated",
+          "user_id",
+          "onboarding_complete",
+          "verification_state"
+        ]
+      },
+      "Sport": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label"
+        ]
+      },
+      "Sports": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Sport"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
+      "PhotoInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "media_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          },
+          "focal_x": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "focal_y": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "media_id",
+          "focal_x",
+          "focal_y"
+        ]
+      },
+      "Photo": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "media_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "focal_x": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "focal_y": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "media_id",
+          "url",
+          "focal_x",
+          "focal_y"
+        ]
+      },
+      "PublicProfile": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "age": {
+            "type": "integer",
+            "minimum": 18
+          },
+          "city": {
+            "type": "string"
+          },
+          "bio": {
+            "type": "string"
+          },
+          "sport_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "photos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Photo"
+            }
+          },
+          "verified": {
+            "type": "boolean",
+            "const": true
+          },
+          "distance_km": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Coarsened public distance; never exact coordinates."
+          },
+          "height_cm": {
+            "type": "number"
+          },
+          "ethnicity": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "display_name",
+          "age",
+          "city",
+          "bio",
+          "sport_ids",
+          "photos",
+          "verified"
+        ]
+      },
+      "ProfilePatch": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "birth_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "city": {
+            "type": "string"
+          },
+          "identity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "intent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "bio": {
+            "type": "string"
+          },
+          "height_cm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ethnicity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "show_height": {
+            "type": "boolean"
+          },
+          "show_ethnicity": {
+            "type": "boolean"
+          },
+          "sport_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "photos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PhotoInput"
+            },
+            "maxItems": 6
+          },
+          "weekly_frequency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "version"
+        ]
+      },
+      "Preferences": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "distance_km": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "sport_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "goal": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "schedule": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "version",
+          "distance_km",
+          "sport_ids",
+          "goal",
+          "schedule"
+        ]
+      },
+      "Discovery": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "state": {
+            "type": "string",
+            "enum": [
+              "results",
+              "empty"
+            ]
+          },
+          "candidates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicProfile"
+            }
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "state",
+          "candidates",
+          "next_cursor"
+        ]
+      },
+      "DecisionInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "target_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "like",
+              "pass"
+            ]
+          }
+        },
+        "required": [
+          "target_id",
+          "decision"
+        ]
+      },
+      "Match": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          },
+          "other_user": {
+            "$ref": "#/components/schemas/PublicProfile"
+          },
+          "conversation_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "other_user",
+          "conversation_id",
+          "created_at"
+        ]
+      },
+      "DecisionResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "like",
+              "pass"
+            ]
+          },
+          "match": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Match"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "quota_remaining": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "quota_resets_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "decision",
+          "match",
+          "quota_remaining",
+          "quota_resets_at"
+        ]
+      },
+      "Matches": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Match"
+            }
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ]
+      },
+      "Conversation": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          },
+          "match_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          },
+          "other_user": {
+            "$ref": "#/components/schemas/PublicProfile"
+          },
+          "unread_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "last_sequence": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "id",
+          "match_id",
+          "other_user",
+          "unread_count",
+          "last_sequence"
+        ]
+      },
+      "Conversations": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Conversation"
+            }
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ]
+      },
+      "MessageInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "client_message_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Must remain nonempty after trimming; size/content limits pending policy."
+          }
+        },
+        "required": [
+          "client_message_id",
+          "text"
+        ]
+      },
+      "Message": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          },
+          "conversation_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          },
+          "sender_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          },
+          "client_message_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "text": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "conversation_id",
+          "sender_id",
+          "client_message_id",
+          "sequence",
+          "text",
+          "created_at"
+        ]
+      },
+      "Messages": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Message"
+            }
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ]
+      },
+      "ReadInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "sequence": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "sequence"
+        ]
+      },
+      "ReadState": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "read_sequence": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "unread_count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "read_sequence",
+          "unread_count"
+        ]
+      },
+      "UploadInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "file_name": {
+            "type": "string"
+          },
+          "mime_type": {
+            "type": "string"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "purpose": {
+            "type": "string",
+            "const": "profile_photo"
+          }
+        },
+        "required": [
+          "file_name",
+          "mime_type",
+          "size_bytes",
+          "purpose"
+        ]
+      },
+      "UploadGrant": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "media_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          },
+          "upload_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "method": {
+            "type": "string",
+            "const": "PUT"
+          },
+          "required_headers": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "media_id",
+          "upload_url",
+          "method",
+          "required_headers",
+          "expires_at"
+        ]
+      },
+      "Media": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "uploading",
+              "processing",
+              "ready",
+              "rejected",
+              "deleting"
+            ]
+          },
+          "rejection_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "state",
+          "rejection_code"
+        ]
+      },
+      "Verification": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "description": "Opaque canonical server ID."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "none",
+              "pending",
+              "verified",
+              "rejected",
+              "expired"
+            ]
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "state",
+          "expires_at"
+        ]
+      },
+      "VerificationStart": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          },
+          "state": {
+            "type": "string",
+            "const": "pending"
+          },
+          "provider_session_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "state",
+          "provider_session_url",
+          "expires_at"
+        ]
+      },
+      "BlockInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "target_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          }
+        },
+        "required": [
+          "target_id"
+        ]
+      },
+      "ReportInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "target_type": {
+            "type": "string",
+            "enum": [
+              "user",
+              "message"
+            ]
+          },
+          "target_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          },
+          "reason_code": {
+            "type": "string"
+          },
+          "details": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "target_type",
+          "target_id",
+          "reason_code"
+        ]
+      },
+      "Report": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          },
+          "state": {
+            "type": "string",
+            "const": "received"
+          }
+        },
+        "required": [
+          "id",
+          "state"
+        ]
+      },
+      "DeviceInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "platform": {
+            "type": "string",
+            "enum": [
+              "ios",
+              "android"
+            ]
+          },
+          "push_token": {
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": [
+          "platform",
+          "push_token"
+        ]
+      },
+      "Device": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "Job": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "running",
+              "completed",
+              "failed"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "state",
+          "created_at"
+        ]
+      },
+      "ConsentInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "purpose": {
+            "type": "string",
+            "const": "marketing"
+          },
+          "granted": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "purpose",
+          "granted"
+        ]
+      },
+      "Consent": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "purpose": {
+            "type": "string",
+            "const": "marketing"
+          },
+          "granted": {
+            "type": "boolean"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "purpose",
+          "granted",
+          "updated_at"
+        ]
+      },
+      "PolicyInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "terms_version": {
+            "type": "string"
+          },
+          "privacy_version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "terms_version",
+          "privacy_version"
+        ]
+      },
+      "DeleteInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "confirmation": {
+            "type": "string",
+            "const": "DELETE"
+          }
+        },
+        "required": [
+          "confirmation"
+        ]
+      },
+      "PrivateProfile": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque canonical server ID."
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "birth_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "city": {
+            "type": "string"
+          },
+          "identity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "intent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "bio": {
+            "type": "string"
+          },
+          "height_cm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ethnicity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "show_height": {
+            "type": "boolean"
+          },
+          "show_ethnicity": {
+            "type": "boolean"
+          },
+          "sport_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "photos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Photo"
+            },
+            "maxItems": 6
+          },
+          "weekly_frequency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "onboarding_complete": {
+            "type": "boolean"
+          },
+          "verification_state": {
+            "type": "string",
+            "enum": [
+              "none",
+              "pending",
+              "verified",
+              "rejected",
+              "expired"
+            ]
+          }
+        },
+        "required": [
+          "user_id",
+          "version",
+          "display_name",
+          "birth_date",
+          "city",
+          "identity",
+          "intent",
+          "bio",
+          "height_cm",
+          "ethnicity",
+          "show_height",
+          "show_ethnicity",
+          "sport_ids",
+          "photos",
+          "weekly_frequency",
+          "onboarding_complete",
+          "verification_state"
+        ]
+      }
+    },
+    "responses": {
+      "Error400": {
+        "description": "Malformed request.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error401": {
+        "description": "Missing, invalid or expired credentials.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error403": {
+        "description": "Eligibility or role denies this action.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error404": {
+        "description": "Resource missing or inaccessible; no private existence disclosure.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error409": {
+        "description": "Version, idempotency or state conflict.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error422": {
+        "description": "Semantic validation failed.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error429": {
+        "description": "Rate limit exceeded.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "headers": {
+          "Retry-After": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "HTTP retry delay or date."
+          }
+        }
+      },
+      "Error503": {
+        "description": "Temporary infrastructure/provider failure; safe retry according to operation.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "cookieSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "pace_session",
+        "description": "Proposed name. Secure HttpOnly session; CSRF enforcement mandatory on cookie mutations."
+      },
+      "bearerSession": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Native short-lived access credential; no URL tokens."
+      }
+    }
+  },
+  "x-draft-omissions": [
+    "Provider-signed verification webhook contract",
+    "Moderator API/role schemas",
+    "Private location update consent/source contract",
+    "Export/deletion restricted job status and download authorization",
+    "Notification preference API",
+    "Realtime connection/event schema and authorization",
+    "Recent-authentication challenge",
+    "Final native refresh concurrency and credential lifetime rules"
+  ]
+}

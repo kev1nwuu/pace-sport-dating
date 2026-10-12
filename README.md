@@ -1,5 +1,20 @@
 # PACE sport-dating prototype
 
+## Latest backend planning scope (2026-10-11)
+
+The confirmed first-release direction is iPhone and Android together, with free profiles, discovery, genuine mutual matches, and persistent chat. Plus, structured invitations, Moments, public activities, and fitness integrations are deferred. Eligibility requires age 18+ and trusted selfie verification before public visibility, Likes, or chat. Markets and launch languages remain undecided. These are planning decisions; the current prototype still exposes demo and deferred flows, and no backend or native app has been implemented.
+
+Read the [execution plan](./docs/PACE_BACKEND_PLAN.md), [data model, permissions and decision register](./docs/PACE_BACKEND_DESIGN.md), [OpenAPI review draft](./docs/PACE_CORE_API_DRAFT.json), and [core acceptance inventory](./docs/PACE_CORE_ACCEPTANCE_PLAN.md). These newer explicit scope decisions supersede older release recommendations; historical audits remain evidence of prototype gaps.
+
+To reproduce the API draft and check its structure from the repository root:
+
+```sh
+node scripts/build-core-api.mjs
+node scripts/check-core-api.mjs
+```
+
+The custom checks verify references and selected consistency rules. They are not full OpenAPI validation or passing backend integration tests.
+
 PACE is a mobile-first browser prototype for meeting people through a shared active lifestyle. The runtime uses plain HTML, CSS, and native JavaScript modules; Playwright is the only development dependency.
 
 **New collaborators and Codex agents: start with [PROJECT_HANDOFF.txt](./PROJECT_HANDOFF.txt).** It contains the English handoff covering product decisions, current design, prototype limitations, architecture, security, tests, and collaboration rules. [AGENTS.md](./AGENTS.md) routes agents to the relevant files. Backend implementation remains gated on Kevin reviewing the backlog/test cases and explicitly authorizing it; this repository handoff does not start that work.

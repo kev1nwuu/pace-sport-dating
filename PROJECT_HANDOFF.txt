@@ -603,6 +603,24 @@ to the task. Ask Kevin to resolve decisions affecting product behavior or access
 This file does not declare that the production backend exists, every risk has
 been eliminated, or every product question has been settled.
 
+Latest confirmed scope update (2026-10-11; packaged 2026-10-12)
+-----------------------------------------------------------
+The user explicitly chose iPhone and Android together and a free first release
+focused on profiles, discovery, mutual matching and persistent chat. Plus,
+structured invitations, Moments, public activities and fitness integrations are
+deferred. Launch market and languages will be decided later. The user confirmed
+age 18+ and mandatory trusted selfie verification before public visibility,
+Likes or chat. These decisions supersede the platform/market/Plus recommendations
+in section 6 and the suggested first-task questions in section 13 below.
+
+The planning package is docs/PACE_BACKEND_PLAN.md, docs/PACE_BACKEND_DESIGN.md,
+docs/PACE_CORE_API_DRAFT.json and docs/PACE_CORE_ACCEPTANCE_PLAN.md. It records
+API/data design, permission rules, open decisions and planned acceptance cases.
+scripts/build-core-api.mjs regenerates the draft; scripts/check-core-api.mjs
+checks structural consistency only. No server or native app was implemented,
+no database was provisioned and no runtime/provider acceptance is established.
+Current prototype features are not silently removed by this documentation.
+
 13. Suggested first collaboration task after handoff
 ===================================================
 The collaborator should first reproduce the local app and read the 18-module

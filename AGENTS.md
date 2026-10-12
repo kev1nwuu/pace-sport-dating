@@ -14,6 +14,7 @@ This is a browser prototype, not a deployed backend or native iOS app. Backend i
 - Plus, direct invites, activities: `docs/ENGAGEMENT_API.md`; `engagement_service.mjs` is an in-memory reference, not a server security boundary.
 - Apple purchases: `docs/APPLE_STOREKIT_INTEGRATION.md`; require server-verified transactions and account ownership. Native success alone grants no entitlement.
 - Backend planning: `docs/BACKEND_AUDIT_DRAFT_2026-09-26.md` (B01–B18 and BE-01–BE-62).
+- Latest confirmed release scope and draft contracts: `docs/PACE_BACKEND_PLAN.md`, `docs/PACE_BACKEND_DESIGN.md`, `docs/PACE_CORE_API_DRAFT.json`, and `docs/PACE_CORE_ACCEPTANCE_PLAN.md`. First release is free core on iPhone and Android, age 18+, with selfie verification before visibility/Likes/chat; paid and community features are deferred. These documents describe planned work, not a running backend.
 - Frontend acceptance: `docs/FRONTEND_TEST_PLAN_2026-09-26.md` (68 scenarios). Written scenarios are not passing test evidence.
 
 Use `package.json` for current commands. Keep data access behind `pace_repository.mjs`, HTTP inside `api_client.mjs`, domain rules DOM-free, and styles in their owning feature. For a behavior change, test the relevant failure and success path; record exactly what ran and what remains unverified. Never silently substitute demo data for a failed HTTP request.
